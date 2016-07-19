@@ -18,13 +18,30 @@ class WebAssertTraitTest extends TestCase
         $stub->assertView('foo-show');
 
         try {
-            $stub->assertView('bar-show');
+            $stub->assertView('bar-show', 'More Message');
         } catch (\Exception $e) {
             $this->assertInstanceOf('PHPUnit_Framework_ExpectationFailedException', $e);
-            $this->assertEquals(
-                "Failed asserting that 'bar-show' The response view actual is 'foo-show'.",
-                $e->getMessage()
-            );
+            
+            $expectedMessage = "More Message";
+            $expectedMessage .= PHP_EOL."Failed asserting that 'bar-show' The response view actual is 'foo-show'.";
+            $this->assertEquals($expectedMessage, $e->getMessage());
+        }
+    }
+
+    public function testAssertTraitExists()
+    {
+        $stub = new TestStub;
+
+        $stub->assertTraitExists('NwLaravel\Testing\WebAssertTrait', $stub);
+
+        try {
+            $stub->assertTraitExists('TraitNoExist', $stub);
+        } catch (\Exception $e) {
+            $this->assertInstanceOf('PHPUnit_Framework_ExpectationFailedException', $e);
+            
+            $expectedMessage = "Failed asserting not exists Trait instance of interface 'TraitNoExist'.";
+            $expectedMessage .= PHP_EOL."Failed asserting that an array has the key 'TraitNoExist'.";
+            $this->assertEquals($expectedMessage, $e->getMessage());
         }
     }
 

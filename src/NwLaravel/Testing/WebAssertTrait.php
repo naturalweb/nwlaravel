@@ -15,7 +15,24 @@ trait WebAssertTrait
      */
     public function assertView($name, $message = '')
     {
-        return PHPUnit::assertThat($name, new ConstraintView($this->response), $message);
+        PHPUnit::assertThat($name, new ConstraintView($this->response), $message);
+    }
+
+    /**
+     * Assert Trait Exists
+     *
+     * @param  string $expected
+     * @param  Object $object
+     * @param  string $message
+     *
+     * @return void
+     * @throws
+     */
+    public function assertTraitExists($expected, $object, $message = '')
+    {
+        $traits = class_uses($object);
+        $message = $message ?: sprintf("Failed asserting not exists Trait instance of interface '%s'.", $expected);
+        PHPUnit::assertArrayHasKey($expected, $traits, $message);
     }
 
     /**

@@ -15,4 +15,4 @@ script:
 after_script:
   - test "5.6" == "${TRAVIS_PHP_VERSION}" && wget https://scrutinizer-ci.com/ocular.phar
   - test -f ocular.phar && php ocular.phar code-coverage:upload --format=php-clover build/logs/clover.xml
-  - test "5.6" == "${TRAVIS_PHP_VERSION}" && php vendor/bin/coveralls -vbuild/logs/clover.xml
+  - test "5.6" == "${TRAVIS_PHP_VERSION}" && php vendor/bin/coveralls build/logs/clover.xml
