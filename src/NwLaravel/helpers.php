@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Arquivo de funções
+ * Arquivo de funÃ§Ãµes
  *
  * @license MIT
  * @package NwLaravel
