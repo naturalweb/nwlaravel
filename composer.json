@@ -22,9 +22,6 @@
         "files": [
             "src/NwLaravel/helpers.php"
         ],
-        "classmap": [
-            "src/commands"
-        ],
         "psr-0": {
             "NwLaravel": "src/"
         }
