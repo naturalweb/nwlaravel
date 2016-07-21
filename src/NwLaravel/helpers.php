@@ -9,7 +9,7 @@
 
 use \Carbon\Carbon;
 use \Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
+use \Illuminate\Support\Facades\DB;
 
 if (! function_exists('asDateTime')) {
     /**
@@ -564,11 +564,10 @@ if (! function_exists('numberRoman')) {
      * Number integer to Roman
      *
      * @param integer $integer
-     * @param boolean $upcase
      *
      * @return string
      */
-    function numberRoman($integer, $upcase = true)
+    function numberRoman($integer)
     {
         $table = array(
             'M'  =>1000,
