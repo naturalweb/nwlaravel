@@ -155,7 +155,7 @@ abstract class AbstractResultset implements Iterator, Countable
      */
     public function valid()
     {
-        return ($this->currentData !== false);
+        return ($this->currentData !== false && !is_null($this->currentData));
     }
 
     /**

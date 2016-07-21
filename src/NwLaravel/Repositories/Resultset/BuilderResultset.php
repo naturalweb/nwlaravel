@@ -23,7 +23,7 @@ class BuilderResultset extends AbstractResultset
     /**
      * Initialize
      *
-     * @param Illuminate\Database\Eloquent\Builder $builder Builder
+     * @param \Illuminate\Database\Eloquent\Builder $builder Builder
      */
     public function __construct(EloquentBuilder $builder)
     {
@@ -56,7 +56,7 @@ class BuilderResultset extends AbstractResultset
     /**
      * Get Prototype
      *
-     * @return Illuminate\Database\Eloquent\Model
+     * @return \Illuminate\Database\Eloquent\Model
      */
     public function getPrototype()
     {
@@ -66,7 +66,7 @@ class BuilderResultset extends AbstractResultset
     /**
      * Get the data
      *
-     * @return object
+     * @return object|bool
      */
     public function current()
     {

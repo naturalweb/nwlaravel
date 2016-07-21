@@ -62,7 +62,7 @@ class ModelResultset extends AbstractResultset
     /**
      * Get the data
      *
-     * @return array|object
+     * @return object|bool
      */
     public function current()
     {
@@ -72,7 +72,6 @@ class ModelResultset extends AbstractResultset
 
         $newInstance = clone $this->getPrototype();
         $newInstance->setRawAttributes((array) $data, true);
-        
         return $newInstance;
     }
 }

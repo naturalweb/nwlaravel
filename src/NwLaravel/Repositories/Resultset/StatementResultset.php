@@ -12,8 +12,7 @@ class StatementResultset extends AbstractResultset
     /**
      * Initialize
      *
-     * @param  PDOStatement $statement PDO Statement
-     * @return void
+     * @param PDOStatement $statement PDO Statement
      */
     public function __construct(PDOStatement $statement)
     {
