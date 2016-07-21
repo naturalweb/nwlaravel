@@ -8,7 +8,7 @@ use Intervention\Image\Image;
 class ImagineFactory
 {
     /**
-     * @var Intervention\Image\ImageManager
+     * @var ImageManager
      */
     protected $manager;
 

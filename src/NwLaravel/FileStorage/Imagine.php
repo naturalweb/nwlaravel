@@ -8,12 +8,12 @@ use Intervention\Image\Image;
 class Imagine
 {
     /**
-     * @var Intervention\Image\ImageManager
+     * @var ImageManager
      */
     protected $manager;
 
     /**
-     * @var Intervention\Image\Image
+     * @var Image
      */
     protected $image;
 

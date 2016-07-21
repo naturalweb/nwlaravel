@@ -48,7 +48,7 @@ abstract class AbstractResultset implements Iterator, Countable
     protected $position = -1;
 
     /**
-     * @var null
+     * @var int
      */
     protected $rowCount = null;
 
@@ -85,7 +85,7 @@ abstract class AbstractResultset implements Iterator, Countable
     /**
      * Get the data
      *
-     * @return array
+     * @return mixed
      */
     public function current()
     {

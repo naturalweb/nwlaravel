@@ -66,7 +66,7 @@ class BuilderResultset extends AbstractResultset
     /**
      * Get the data
      *
-     * @return array|object
+     * @return object
      */
     public function current()
     {

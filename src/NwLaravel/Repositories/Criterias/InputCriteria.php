@@ -248,9 +248,10 @@ class InputCriteria implements CriteriaInterface
      * Where
      *
      * @param Builder $query    Builder
-     * @param unknown $key      Key
+     * @param string  $key      Key
      * @param string  $operator String Operator
      * @param int     $value    Value
+     *
      * @throws InvalidArgumentException
      * @return mixed
      */
@@ -353,9 +354,10 @@ class InputCriteria implements CriteriaInterface
      * Where Date
      *
      * @param Builder $query    Builder
-     * @param unknown $key      Key
+     * @param string  $key      Key
      * @param string  $operator String Operator
      * @param int     $value    Value
+     *
      * @throws InvalidArgumentException
      * @return mixed
      */
