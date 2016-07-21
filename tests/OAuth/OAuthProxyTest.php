@@ -9,8 +9,9 @@ use NwLaravel\OAuth\OAuthClientEntity;
 use GuzzleHttp\Client;
 use Illuminate\Support\Collection;
 use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Message\Response as GuzzleResponse;
-use GuzzleHttp\Message\RequestInterface;
+use Psr\Http\Message\RequestInterface;
+use GuzzleHttp\Psr7\Response as GuzzleResponse;
+use Psr\Http\Message\ResponseInterface;
 
 class OAuthProxyTest extends TestCase
 {

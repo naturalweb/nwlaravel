@@ -4,9 +4,8 @@ namespace NwLaravel\OAuth;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Message\Response as GuzzleResponse;
-use GuzzleHttp\Message\ResponseInterface;
-use GuzzleHttp\Stream\Stream;
+use GuzzleHttp\Psr7\Response as GuzzleResponse;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Class Proxy
@@ -91,11 +90,11 @@ class OAuthProxy
 
         } catch (RequestException $e) {
             $body = sprintf('{"error": "%s", "error_description": "%s"}', get_class($e), $e->getMessage());
-            $guzzleResponse = $e->getResponse() ?: new GuzzleResponse(500, [], Stream::factory($body));
+            $guzzleResponse = $e->hasResponse() ? $e->getResponse() : new GuzzleResponse(500, [], $body);
 
         } catch (\Exception $e) {
             $body = sprintf('{"error": "%s", "error_description": "%s"}', get_class($e), $e->getMessage());
-            $guzzleResponse = new GuzzleResponse(500, [], Stream::factory($body));
+            $guzzleResponse = new GuzzleResponse(500, [], $body);
         }
 
         return $this->parseResponse($guzzleResponse);
