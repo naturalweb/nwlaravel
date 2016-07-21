@@ -7,6 +7,7 @@ use Prettus\Repository\Eloquent\BaseRepository;
 use NwLaravel\Repositories\Criterias\InputCriteria;
 use NwLaravel\Repositories\Resultset\BuilderResultset;
 use BadMethodCallException;
+use RuntimeException;
 
 /**
  * Class AbstractRepository
@@ -78,10 +79,10 @@ abstract class AbstractRepository extends BaseRepository
     /**
      * Search Paginator
      *
-     * @param array  $input         Array Input
-     * @param string $orderBy       String Order By
-     * @param int    $limit         Integer Limit
-     * @param bool   $skipPresenter Boolean Skip Presenter
+     * @param array    $input         Array Input
+     * @param string   $orderBy       String Order By
+     * @param int|null $limit         Integer Limit
+     * @param bool     $skipPresenter Boolean Skip Presenter
      *
      * @return Paginator
      */
@@ -122,7 +123,7 @@ abstract class AbstractRepository extends BaseRepository
      * @param  array   $parameters
      * @return mixed
      *
-     * @throws \BadMethodCallException
+     * @throws BadMethodCallException
      */
     public function __call($method, $parameters)
     {
@@ -305,9 +306,9 @@ abstract class AbstractRepository extends BaseRepository
                 $value = "(@rownum = @rownum+1)";
                 return $reorder($statement, $value);
 
-            case $conn instanceof \lluminate\Database\SQLiteConnection:
+            case $conn instanceof \Illuminate\Database\SQLiteConnection:
             default:
-                throw new \RuntimeException(sprintf("Reorder not valid for connection (%s)", get_class($conn)));
+                throw new RuntimeException(sprintf("Reorder not valid for connection (%s)", get_class($conn)));
         }
     }
 
