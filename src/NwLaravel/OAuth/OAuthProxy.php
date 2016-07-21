@@ -5,6 +5,7 @@ namespace NwLaravel\OAuth;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Message\Response as GuzzleResponse;
+use GuzzleHttp\Message\ResponseInterface;
 use GuzzleHttp\Stream\Stream;
 
 /**
@@ -120,10 +121,10 @@ class OAuthProxy
     /**
      * Parse Response
      *
-     * @param  string $guzzleResponse Guzzle Response
+     * @param ResponseInterface $guzzleResponse
      * @return string
      */
-    private function parseResponse($guzzleResponse)
+    private function parseResponse(ResponseInterface $guzzleResponse)
     {
         $body = json_decode($guzzleResponse->getBody());
         $response = response()->json($body);

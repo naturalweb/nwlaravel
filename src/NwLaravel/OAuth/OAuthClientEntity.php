@@ -6,8 +6,6 @@ use Illuminate\Database\Eloquent\Model as Eloquent;
 
 /**
  * Class OAuthClient Entity
- *
- * @package Titan\OAuth
  */
 class OAuthClientEntity extends Eloquent
 {
