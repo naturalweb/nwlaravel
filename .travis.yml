@@ -6,7 +6,7 @@ php:
 
 before_script:
   - curl -s http://getcomposer.org/installer | php
-  - php composer.phar install --dev --prefer-source --no-interaction
+  - php composer.phar install --prefer-source --no-interaction
 
 script:
   - mkdir -p build/logs
@@ -15,4 +15,4 @@ script:
 after_script:
   - test "5.6" == "${TRAVIS_PHP_VERSION}" && wget https://scrutinizer-ci.com/ocular.phar
   - test -f ocular.phar && php ocular.phar code-coverage:upload --format=php-clover build/logs/clover.xml
-  - test "5.6" == "${TRAVIS_PHP_VERSION}" php vendor/bin/coveralls -x build/logs/clover.xml -v
+  - test "5.6" == "${TRAVIS_PHP_VERSION}" && php vendor/bin/coveralls -x build/logs/clover.xml -v
