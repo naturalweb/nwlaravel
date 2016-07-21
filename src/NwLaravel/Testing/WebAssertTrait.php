@@ -5,6 +5,9 @@ namespace NwLaravel\Testing;
 use Illuminate\Contracts\View;
 use PHPUnit_Framework_TestCase as PHPUnit;
 
+/**
+  * @property object $response
+  */
 trait WebAssertTrait
 {
     /**
@@ -21,9 +24,9 @@ trait WebAssertTrait
     /**
      * Assert Trait Exists
      *
-     * @param  string $expected
-     * @param  Object $object
-     * @param  string $message
+     * @param string $expected
+     * @param Object $object
+     * @param string $message
      *
      * @return void
      * @throws

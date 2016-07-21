@@ -6,10 +6,21 @@ use Illuminate\Contracts\View;
 
 class ConstraintView extends \PHPUnit_Framework_Constraint
 {
+    /**
+     * @var string
+     */
     protected $view;
 
+    /**
+     * @var object
+     */
     protected $response;
 
+    /**
+     * Construct
+     *
+     * @param object $response
+     */
     public function __construct($response)
     {
         parent::__construct();
@@ -44,12 +55,11 @@ class ConstraintView extends \PHPUnit_Framework_Constraint
     {
         if (is_null($this->view)) {
             return "The response view not defined";
-
-        } else {
-            return sprintf(
-                "The response view actual is '%s'",
-                $this->view
-            );
         }
+
+        return sprintf(
+            "The response view actual is '%s'",
+            $this->view
+        );
     }
 }
