@@ -4,7 +4,7 @@ namespace NwLaravel\FileStorage;
 
 use \Exception;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Illuminate\Contracts\Filesystem\Factory as Storage;
+use Illuminate\Contracts\Filesystem\Filesystem as Storage;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Image;
 
@@ -14,7 +14,7 @@ use Intervention\Image\Image;
 class StorageManager
 {
     /**
-     * @var \Illuminate\Contracts\Filesystem\Factory
+     * @var Storage
      */
     protected $storage;
 
@@ -23,11 +23,6 @@ class StorageManager
      */
     protected $imagineFactory;
 
-    /**
-     * Construct
-     *
-     * @param Storage $storage Storage Default
-     */
     /**
      * Construct
      *

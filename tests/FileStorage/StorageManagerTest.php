@@ -7,7 +7,7 @@ use Mockery as m;
 use NwLaravel\FileStorage\StorageManager;
 use NwLaravel\FileStorage\Imagine;
 use NwLaravel\FileStorage\ImagineFactory;
-use Illuminate\Contracts\Filesystem\Factory as Storage;
+use Illuminate\Contracts\Filesystem\Filesystem as Storage;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class StorageManagerTest extends TestCase
