@@ -2,7 +2,7 @@
 
 namespace NwLaravel\Testing;
 
-use Illuminate\Contracts\View;
+use Illuminate\Contracts\View\View;
 
 class ConstraintView extends \PHPUnit_Framework_Constraint
 {

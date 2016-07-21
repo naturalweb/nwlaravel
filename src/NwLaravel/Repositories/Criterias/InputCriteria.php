@@ -193,7 +193,6 @@ class InputCriteria implements CriteriaInterface
             }
 
             // Scope
-            // eg: $query = $query->example($value);
             $methodScope = 'scope' . studly_case($key);
             if (is_object($model) && method_exists($model, $methodScope)) {
                 $methodName = camel_case($key);
@@ -213,16 +212,20 @@ class InputCriteria implements CriteriaInterface
                     $query = $query->whereRaw($value);
                 }
 
-                // Using String Format {field},{operator},{value}
+                /**
+                 * Using String Format
+                 * eg: {field},{operator},{value}
+                 */
                 if (is_string($value) && preg_match('/^([a-zA-Z0-9_]+),(.+),(.+)$/', $value, $matches)) {
                     if (count($matches)==4) {
                         $value = array_splice($matches, 1, 3);
                     }
                 }
 
-                // Using Array com Operator
-                // ex: ('field', '=', 'value') or
-                //     ('field', 'value')
+                /**
+                 * Using Array com Operator
+                 * eg: ex: ('field', '=', 'value') or ('field', 'value')
+                 */
                 if (is_array($value) && count($value)) {
                     $value = array_pad($value, 3, null);
                     list($field, $operator, $valor) = array_splice($value, 0, 3);
@@ -257,12 +260,12 @@ class InputCriteria implements CriteriaInterface
      */
     protected function whereCriteria($query, $key, $operator = null, $value = null)
     {
-        $validOperator = function ($operator, $value) {
+        $validOperator = function ($operator) {
             $operators = ['=', '<', '>', '<=', '>=', '<>', '!='];
             return in_array($operator, $operators);
         };
 
-        if (! $validOperator($operator, $value)) {
+        if (! $validOperator($operator)) {
             throw new InvalidArgumentException("Illegal operator and value combination.");
         }
 
@@ -311,12 +314,9 @@ class InputCriteria implements CriteriaInterface
             // Busca Direta
             $query = $query->where($key, $operator, $value);
             return $query;
-
-        } else {
-            $query = $this->whereBetweenColumn($query, $key, $value);
-            return $query;
         }
 
+        $query = $this->whereBetweenColumn($query, $key, $value);
         return $query;
     }
 
@@ -372,7 +372,7 @@ class InputCriteria implements CriteriaInterface
 
             if ($date instanceof Datetime) {
                 $query = $query->whereRaw(
-                    $this->dateFormatDb($query, $key, $operator, $date),
+                    $this->dateFormatDb($query, $key, $operator),
                     [$date->format('Y-m-d')]
                 );
             } else {
@@ -421,13 +421,12 @@ class InputCriteria implements CriteriaInterface
      * Date Formate Database
      *
      * @param Builder  $query    Builder
-     * @param unknown  $key      Column
+     * @param string   $key      Column
      * @param string   $operator String Operator
-     * @param DateTime $date     Date Time
      *
      * @return string
      */
-    private function dateFormatDb($query, $key, $operator, DateTime $date)
+    private function dateFormatDb($query, $key, $operator)
     {
         if (!$this->grammar) {
             $this->grammar = $query->getQuery()->getGrammar();

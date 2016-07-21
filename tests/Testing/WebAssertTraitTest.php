@@ -12,7 +12,7 @@ class WebAssertTraitTest extends TestCase
         $stub = new TestStub;
 
         $stub->response = new \stdClass;
-        $stub->response->original = m::mock('Illuminate\Contracts\View');
+        $stub->response->original = m::mock('Illuminate\Contracts\View\View');
         $stub->response->original->shouldReceive('name')->twice()->andReturn('foo-show');
 
         $stub->assertView('foo-show');

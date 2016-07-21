@@ -28,8 +28,10 @@ class HelpersTest extends TestCase
 
     public function testAsDateTime()
     {
+        $now = new \DateTime;
+        
         $this->assertEquals(null, asDateTime(''));
-        $this->assertEquals(Carbon::instance(new \DateTime), asDateTime(new \DateTime));
+        $this->assertEquals(Carbon::instance($now), asDateTime($now));
         $this->assertEquals(Carbon::createFromTimestamp(1), asDateTime(1));
         $this->assertEquals(Carbon::createFromFormat('Y-m-d', '2010-10-24')->startOfDay(), asDateTime('2010-10-24'));
         $this->assertEquals(null, asDateTime(new \stdClass));
