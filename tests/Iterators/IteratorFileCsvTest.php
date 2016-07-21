@@ -3,7 +3,7 @@ namespace Tests\Iterators;
 
 use Tests\TestCase;
 use NwLaravel\Iterators\IteratorFileCsv;
-use NwLaravel\Iterators\IteratorFile;
+use NwLaravel\Iterators\AbstractIteratorFile;
 use NwLaravel\Iterators\IteratorInterface;
 
 class IteratorFileCsvTest extends TestCase
@@ -13,7 +13,7 @@ class IteratorFileCsvTest extends TestCase
         $headers = ['ID', 'NOME', 'FIELD1'];
         $iterator = new IteratorFileCsv(__DIR__.'/stub.csv', $headers, ',', "'", '\\');
 
-        $this->assertInstanceOf(IteratorFile::class, $iterator);
+        $this->assertInstanceOf(AbstractIteratorFile::class, $iterator);
         $this->assertInstanceOf(IteratorInterface::class, $iterator);
 
         $this->assertAttributeEquals(',', 'delimiter', $iterator);

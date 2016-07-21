@@ -11,6 +11,7 @@ class IteratorFileTest extends TestCase
         $headers = [];
         $iterator = new IteratorFile(__DIR__.'/stub.csv');
 
+        $this->assertInstanceOf('NwLaravel\Iterators\AbstractIteratorFile', $iterator);
         $this->assertInstanceOf(\Iterator::class, $iterator);
         $this->assertInstanceOf(\Countable::class, $iterator);
     }
@@ -37,27 +38,27 @@ class IteratorFileTest extends TestCase
         $iterator = new IteratorFile(__DIR__.'/stub.csv');
 
         $iterator->rewind();
-        $this->assertAttributeEquals('Id;Name;Foo Bar', 'lineCurrent', $iterator);
+        $this->assertAttributeEquals('Id;Name;Foo Bar', 'current', $iterator);
         $this->assertEquals('Id;Name;Foo Bar', $iterator->current());
         $this->assertEquals('0', $iterator->key());
 
         $iterator->next();
-        $this->assertAttributeEquals('1;renato;test1', 'lineCurrent', $iterator);
+        $this->assertAttributeEquals('1;renato;test1', 'current', $iterator);
         $this->assertEquals('1;renato;test1', $iterator->current());
         $this->assertEquals('1', $iterator->key());
 
         $iterator->next();
-        $this->assertAttributeEquals('2;miguel;test2', 'lineCurrent', $iterator);
+        $this->assertAttributeEquals('2;miguel;test2', 'current', $iterator);
         $this->assertEquals('2;miguel;test2', $iterator->current());
         $this->assertEquals('2', $iterator->key());
 
         $iterator->next();
-        $this->assertAttributeEquals(';;', 'lineCurrent', $iterator);
+        $this->assertAttributeEquals(';;', 'current', $iterator);
         $this->assertEquals(';;', $iterator->current());
         $this->assertEquals('3', $iterator->key());
 
         $iterator->next();
-        $this->assertAttributeEquals('3;Canção', 'lineCurrent', $iterator);
+        $this->assertAttributeEquals('3;Canção', 'current', $iterator);
         $this->assertEquals('3;Canção', $iterator->current());
         $this->assertEquals('4', $iterator->key());
 

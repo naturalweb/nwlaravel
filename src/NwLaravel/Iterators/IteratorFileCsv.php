@@ -5,10 +5,10 @@ namespace NwLaravel\Iterators;
 /**
  * Library Result Csv
  */
-class IteratorFileCsv extends IteratorFile implements IteratorInterface
+class IteratorFileCsv extends AbstractIteratorFile implements IteratorInterface
 {
     /**
-     * @var array
+     * @var array|null
      */
     protected $headers;
 
@@ -23,7 +23,7 @@ class IteratorFileCsv extends IteratorFile implements IteratorInterface
     protected $enclosure;
 
     /**
-     * @var bool
+     * @var string|null
      */
     protected $escape;
 
@@ -63,40 +63,45 @@ class IteratorFileCsv extends IteratorFile implements IteratorInterface
         $this->setHeaders($headers);
         $this->delimiter = (string) !is_null($delimiter) ? $delimiter : self::DELIMITER_DEFAULT;
         $this->enclosure = $enclosure ?: self::ENCLOSURE_DEFAULT;
-        $this->escape    = $escape ?: null;
+        $this->escape    = $escape ? $escape : null;
     }
 
     /**
-     * Conta as linhas pulando o cabeçalho, se existir
+     * Line to array
      *
-     * @return integer
+     * @return array|null
      */
-    public function count()
+    private function rowArray()
     {
-        if (is_null($this->count)) {
-            $this->count = parent::count();
+        $row = null;
+        $line = $this->getLine();
 
-            $this->count -= 1;
+        if ($line !== false && !is_null($line)) {
+            $row = str_getcsv($line, $this->delimiter, $this->enclosure, $this->escape);
+            $row = array_map("trim", $row);
         }
 
-        return $this->count;
+        return $row;
     }
 
     /**
-     * Remove campos quecao estao no cabeçalho
+     * Make Row Current
      *
-     * @return array
+     * @return array|bool
      */
-    public function current()
+    public function makeCurrent()
     {
-        $row = $this->lineCurrent;
+        $row = $this->rowArray();
+        if (is_null($row)) {
+            return false;
+        }
 
         $validateRow = array_filter($row, function ($value) {
-            return $value === '0' ? true : !empty($value);
+            return ($value === '0') ? true : !empty($value);
         });
 
         if (!count($validateRow)) {
-            return $validateRow; // Vazio
+            return (array) $validateRow; // Vazio
         }
 
         $headers = $this->getHeaders();
@@ -118,6 +123,21 @@ class IteratorFileCsv extends IteratorFile implements IteratorInterface
     }
 
     /**
+     * Conta as linhas pulando o cabeçalho, se existir
+     *
+     * @return integer
+     */
+    public function count()
+    {
+        if (is_null($this->count)) {
+            $this->count = parent::count();
+            $this->count -= 1;
+        }
+
+        return $this->count;
+    }
+
+    /**
      * Rewind na segunda linha
      *
      * @see FileIterator::rewind()
@@ -131,40 +151,25 @@ class IteratorFileCsv extends IteratorFile implements IteratorInterface
     }
 
     /**
-     * Le alinha no arquivo, formata o encodig caso seja necessario
-     *
-     * @return string
-     */
-    protected function getLine()
-    {
-        $line = parent::getLine();
-
-        if ($line !== false) {
-            $line = str_getcsv($line, $this->delimiter, $this->enclosure, $this->escape);
-            $line = array_map("trim", $line);
-        }
-
-        return $line;
-    }
-
-    /**
      * Retorna o headers tendo como chave a posicao das colunas da planilha
      *
      * @return array
      */
     public function getHeaders()
     {
-        if ($this->headers === null) {
+        if (is_null($this->headers)) {
             $tell = ftell($this->fileHandle);
             fseek($this->fileHandle, 0);
+            $row = $this->rowArray();
+            $headers = array();
 
-            $headers = $this->getLine();
-            $headers = array_map(function ($title) {
-                return strtolower(str_slug($title, '_'));
-            }, $headers);
+            if (is_array($row)) {
+                $headers = array_map(function ($title) {
+                    return strtolower(str_slug($title, '_'));
+                }, $row);
+            }
 
             fseek($this->fileHandle, $tell);
-
             $this->headers = $headers;
         }
 
@@ -176,7 +181,7 @@ class IteratorFileCsv extends IteratorFile implements IteratorInterface
      *
      * @param array $headers Headers
      *
-     * @return void
+     * @return IteratorFileCsv
      */
     public function setHeaders(array $headers)
     {
