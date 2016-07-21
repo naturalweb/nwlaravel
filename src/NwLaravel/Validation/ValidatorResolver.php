@@ -7,6 +7,9 @@ use Illuminate\Validation\Validator as BaseValidator;
 
 /**
  * Class ValidatorResolver
+ *
+ * @method bool validateCpf(string $attribute, mixed $value, array $parameters)
+ * @method bool validateCnpj(string $attribute, mixed $value, array $parameters)
  */
 class ValidatorResolver extends BaseValidator
 {
@@ -15,7 +18,7 @@ class ValidatorResolver extends BaseValidator
      *
      * @param string $attribute  String Attribute
      * @param string $value      String Value
-     * @param  array $parameters Array Parameters
+     * @param array  $parameters Array Parameters
      *
      * @return boolean
      */
@@ -27,9 +30,10 @@ class ValidatorResolver extends BaseValidator
     /**
      * Validate Current Password
      *
-     * @param  string $attribute  String Attribute
-     * @param  mixed  $value      Mixed Value
-     * @param  array $parameters Array Parameters
+     * @param string $attribute  String Attribute
+     * @param mixed  $value      Mixed Value
+     * @param array  $parameters Array Parameters
+     *
      * @return bool
      */
     public function validateCurrentPassword($attribute, $value, $parameters = array())
@@ -40,9 +44,10 @@ class ValidatorResolver extends BaseValidator
     /**
      * Validate that an attribute is cpf valid
      *
-     * @param  string $attribute String Attribute
-     * @param  mixed  $value     Mixed Value
-     * @param  array $parameters Array Parameters
+     * @param string $attribute String Attribute
+     * @param mixed  $value     Mixed Value
+     * @param array  $parameters Array Parameters
+     *
      * @return bool
      */
     public function validateDocument($attribute, $value, $parameters = array())
