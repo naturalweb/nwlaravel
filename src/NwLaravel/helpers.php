@@ -142,9 +142,9 @@ if (! function_exists('toFixed')) {
 
 if (! function_exists('numberHumans')) {
     /**
-     * Date Formatter
+     * Number Humans
      *
-     * @param int $number Integer Number
+     * @param float $number Number
      *
      * @return string
      */

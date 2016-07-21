@@ -48,6 +48,39 @@ class HelpersTest extends TestCase
         $this->assertEquals(null, fromDateTime('teste'));
     }
 
+    public function testNumberHumans()
+    {
+        $this->assertEquals('-1', numberHumans(-1));
+        $this->assertEquals('999', numberHumans(999));
+        $this->assertEquals('1K', numberHumans(1001));
+        $this->assertEquals('1.1K', numberHumans(1100));
+        $this->assertEquals('1.9K', numberHumans(1999));
+        $this->assertEquals('999.9K', numberHumans(999999));
+        $this->assertEquals('1M', numberHumans(1000000));
+        $this->assertEquals('1.1M', numberHumans(1100000));
+        $this->assertEquals('1.9M', numberHumans(1999999));
+        $this->assertEquals('999.9M', numberHumans(999999999));
+        $this->assertEquals('1B', numberHumans(1000000000));
+        $this->assertEquals('1.1B', numberHumans(1100000000));
+        $this->assertEquals('1.9B', numberHumans(1999999999));
+        $this->assertEquals('999.9B', numberHumans(999999999999));
+        $this->assertEquals('1T', numberHumans(1000000000000));
+        $this->assertEquals('1.1T', numberHumans(1100000000000));
+        $this->assertEquals('1.9T', numberHumans(1999999999999));
+        $this->assertEquals('999.9T', numberHumans(999999999999990));
+    }
+
+    public function providerNumberHumans()
+    {
+        return [
+            ['123.6KB',123.66, 'K'],
+            ['44.7MB',44.79, 'M'],
+            ['99GB', 99, 'G'],
+            ['5TB', 5, 'T'],
+            ['1PB', 1, 'P'],
+        ];
+    }
+
     /**
      * @dataProvider providerStorageFormatWithBytes
      */
