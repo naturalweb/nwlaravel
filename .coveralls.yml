@@ -1,9 +1,0 @@
-# .coveralls.yml
-
-# travis-ci or travis-pro
-service_name: travis-pro
-repo_token: kUi4YsCJS6rHwRcDhpAkpAbKeQGAiy5Pv
-
-# for php-coveralls
-coverage_clover: build/logs/clover.xml
-json_path: build/logs/coveralls-upload.json
