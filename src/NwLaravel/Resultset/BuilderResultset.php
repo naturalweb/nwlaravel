@@ -1,6 +1,6 @@
 <?php
 
-namespace NwLaravel\Repositories\Resultset;
+namespace NwLaravel\Resultset;
 
 use RuntimeException;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;

@@ -7,7 +7,7 @@ use Tests\TestCase;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use NwLaravel\Repositories\Criterias\InputCriteria;
-use NwLaravel\Repositories\Resultset\BuilderResultset;
+use NwLaravel\Resultset\BuilderResultset;
 
 class AbstractRepositoryTest extends TestCase
 {

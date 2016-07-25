@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Prettus\Repository\Eloquent\BaseRepository;
 use NwLaravel\Repositories\RepositoryInterface;
 use NwLaravel\Repositories\Criterias\InputCriteria;
-use NwLaravel\Repositories\Resultset\BuilderResultset;
+use NwLaravel\Resultset\BuilderResultset;
 use BadMethodCallException;
 use RuntimeException;
 

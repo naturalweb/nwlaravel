@@ -1,10 +1,10 @@
 <?php
 
-namespace Tests\Repositories\Resultset;
+namespace Tests\Resultset;
 
 use Mockery as m;
 use PHPUnit_Framework_TestCase;
-use NwLaravel\Repositories\Resultset\AbstractResultset;
+use NwLaravel\Resultset\AbstractResultset;
 
 class StubAbstractResultset extends AbstractResultset
 {
@@ -26,7 +26,7 @@ class AbstractResultsetTest extends PHPUnit_Framework_TestCase
     {
         $resultSet = new StubAbstractResultset($this->statement);
 
-        $this->assertInstanceOf('NwLaravel\Repositories\Resultset\AbstractResultset', $resultSet);
+        $this->assertInstanceOf('NwLaravel\Resultset\AbstractResultset', $resultSet);
         $this->assertAttributeSame($this->statement, 'statement', $resultSet);
         $this->assertAttributeSame(false, 'currentData', $resultSet);
         $this->assertAttributeSame(false, 'rewindComplete', $resultSet);
