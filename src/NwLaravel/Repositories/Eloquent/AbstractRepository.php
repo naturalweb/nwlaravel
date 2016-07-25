@@ -4,6 +4,7 @@ namespace NwLaravel\Repositories\Eloquent;
 
 use Illuminate\Database\Eloquent\Builder;
 use Prettus\Repository\Eloquent\BaseRepository;
+use NwLaravel\Repositories\RepositoryInterface;
 use NwLaravel\Repositories\Criterias\InputCriteria;
 use NwLaravel\Repositories\Resultset\BuilderResultset;
 use BadMethodCallException;
@@ -14,7 +15,7 @@ use RuntimeException;
  *
  * @abstract
  */
-abstract class AbstractRepository extends BaseRepository
+abstract class AbstractRepository extends BaseRepository implements RepositoryInterface
 {
     /**
      * @var string
@@ -317,7 +318,7 @@ abstract class AbstractRepository extends BaseRepository
      *
      * @param array $input Array Input
      *
-     * @return Builder
+     * @return AbstractRepository
      */
     public function whereInputCriteria(array $input = array())
     {

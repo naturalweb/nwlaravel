@@ -6,10 +6,7 @@ use Mockery as m;
 use Tests\TestCase;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use NwLaravel\Repositories\Eloquent\AbstractRepository;
 use NwLaravel\Repositories\Criterias\InputCriteria;
-use Illuminate\Container\Container as Application;
-use Prettus\Repository\Eloquent\BaseRepository;
 use NwLaravel\Repositories\Resultset\BuilderResultset;
 
 class AbstractRepositoryTest extends TestCase
@@ -28,7 +25,8 @@ class AbstractRepositoryTest extends TestCase
     {
         $repo = new StubAbstractRepository($this->app);
 
-        $this->assertInstanceOf(BaseRepository::class, $repo);
+        $this->assertInstanceOf('NwLaravel\Repositories\RepositoryInterface', $repo);
+        $this->assertInstanceOf('Prettus\Repository\Eloquent\BaseRepository', $repo);
     }
 
     public function testSearch()
@@ -53,7 +51,7 @@ class AbstractRepositoryTest extends TestCase
         $result = ['result-all'];
         $input = ['foo', 'bar' => 'baz'];
 
-        $query = m::mock('Illuminate\Database\Eloquent\Builder');
+        $query = m::mock(Builder::class);
         $query->shouldReceive('limit')->with(100)->andReturn($result);
 
         $repo = m::mock(StubAbstractRepository::class.'[skipPresenter, orderBy, getQuery]', [$this->app]);
