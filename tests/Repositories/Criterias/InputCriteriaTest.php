@@ -1,6 +1,6 @@
 <?php
 
-namespace NwLaravel\Repositories\Criterias;
+namespace Tests\Repositories\Criterias;
 
 use Mockery as m;
 use Tests\TestCase;
