@@ -102,18 +102,19 @@ class HelpersTest extends TestCase
     public function providerStorageFormatWithNivel()
     {
         return [
-            ['123.6KB',123.66, 'K'],
-            ['44.7MB',44.79, 'M'],
-            ['99GB', 99, 'G'],
-            ['5TB', 5, 'T'],
-            ['1PB', 1, 'P'],
+            ['123.6KB',123.66, 'KB'],
+            ['44.7MB',44.79, 'MB'],
+            ['99GB', 99, 'GB'],
+            ['5TB', 5, 'TB'],
+            ['1PB', '1', 'PB'],
+            ['1a2', '1a2', 'PB'],
         ];
     }
 
     public function providerStorageFormatWithBytes()
     {
         return [
-            ['44.7B', 44.79],
+            ['44.7B', ' 44.79 '],
             ['999B', 999],
             ['1KB', 1099],
             ['7.1KB', 7180],
@@ -128,6 +129,7 @@ class HelpersTest extends TestCase
             ['999.9GB', 999999999999],
             ['1TB', 1000000000000],
             ['1PB', 1000000000000000],
+            ['aBc', ' aBc '],
         ];
     }
 

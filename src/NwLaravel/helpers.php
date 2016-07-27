@@ -179,63 +179,34 @@ if (! function_exists('storageFormat')) {
     /**
      * Storage Format
      *
-     * @param int $storage Integer Storage
+     * @param float  $storage Integer Storage
+     * @param string $nivel   Nivel Storage
      *
      * @return string
      */
     function storageFormat($storage, $nivel = null)
     {
-        switch (strtoupper($nivel)) {
-            default:
-                $multi = 1;
-                break;
-            case 'K':
-                $multi = 1024*1000;
-                break;
-            case 'M':
-                $multi = 1024*1000*1000;
-                break;
-            case 'G':
-                $multi = 1024*1000*1000*1000;
-                break;
-            case 'T':
-                $multi = 1024*1000*1000*1000*1000;
-                break;
-            case 'P':
-                $multi = 1024*1000*1000*1000*1000*1000;
-                break;
+        $storage = trim($storage);
+        if (!is_numeric($storage)) {
+            return $storage;
         }
 
-        $storage = $storage * $multi;
+        $sizes = ['KB' => 1, 'MB' => 2, 'GB' => 3, 'TB' => 4, 'PB' => 5];
 
-        if ($multi > 1 && $storage >= $multi) {
-            $storage = $storage / 1024;
+        if (!is_null($nivel) && array_key_exists(strtoupper($nivel), $sizes)) {
+            $multi = 1024*pow(1000, $sizes[strtoupper($nivel)]);
+            $storage = $storage * $multi;
+            if ($storage >= $multi) {
+                $storage = $storage / 1024;
+            }
         }
 
         $sufix = 'B';
-        if ($storage >= 1000) {
-            $storage = $storage / 1000;
-            $sufix = 'KB';
-        }
-
-        if ($storage >= 1000) {
-            $storage = $storage / 1000;
-            $sufix = 'MB';
-        }
-
-        if ($storage >= 1000) {
-            $storage = $storage / 1000;
-            $sufix = 'GB';
-        }
-
-        if ($storage >= 1000) {
-            $storage = $storage / 1000;
-            $sufix = 'TB';
-        }
-
-        if ($storage >= 1000) {
-            $storage = $storage / 1000;
-            $sufix = 'PB';
+        foreach (array_keys($sizes) as $size) {
+            if ($storage >= 1000) {
+                $storage = $storage / 1000;
+                $sufix = $size;
+            }
         }
 
         return toFixed($storage, 1).$sufix;
