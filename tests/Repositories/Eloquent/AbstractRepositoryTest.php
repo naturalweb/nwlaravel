@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use NwLaravel\Repositories\Criterias\InputCriteria;
 use NwLaravel\Resultset\BuilderResultset;
+use Prettus\Validator\Contracts\ValidatorInterface;
 
 class AbstractRepositoryTest extends TestCase
 {
@@ -409,44 +410,61 @@ class AbstractRepositoryTest extends TestCase
 
     public function testCreate()
     {
-        $attributes = ['foo' => 'bar', 'test' => 'bazz'];
-        $input = ['foo' => '', 'test' => 'bazz'];
+        $toArray = ['foo' => 'bar'];
+        $input = ['foo' => '', 'test' => 'barrrr'];
+        $attributes = ['foo' => 'bar', 'test' => 'barrrr'];
+        
+        $validator = m::mock('Prettus\Validator\LaravelValidator');
+        $validator->shouldReceive('with')->with($attributes)->andReturn($validator);
+        $validator->shouldReceive('passesOrFail')->with(ValidatorInterface::RULE_CREATE);
+
+        $modelValid = m::mock(Model::class);
+        $modelValid->shouldReceive('forceFill')->once()->with($input)->andReturn($modelValid);
+        $modelValid->shouldReceive('toArray')->once()->andReturn($toArray);
+        $this->model->shouldReceive('newInstance')->once()->ordered()->andReturn($modelValid);
 
         $new_model = m::mock(Model::class);
         $new_model->shouldReceive('save')->once();
-
-        $this->model->shouldReceive('fill')->once()->andReturn($this->model);
-        $this->model->shouldReceive('toArray')->once()->andReturn(['foo' => 'bar']);
-        $this->model->shouldReceive('newInstance')->once()->with($attributes)->andReturn($new_model);
+        $this->model->shouldReceive('newInstance')->once()->ordered()->with($attributes)->andReturn($new_model);
 
         $events = m::mock('events');
         $events->shouldReceive('fire')->once();
         $this->app->instance('events', $events);
 
         $repo = new StubAbstractRepository($this->app);
+        $repo->makeValidator($validator);
 
         $this->assertEquals($new_model, $repo->create($input));
     }
 
     public function testUpdate()
     {
-        $attributes = ['foo' => 'bar', 'test' => 'bazz'];
-        $input = ['foo' => '', 'test' => 'bazz'];
+        $toArray = ['foo' => 'bar'];
+        $input = ['foo' => '', 'test' => 'barrrr'];
+        $attributes = ['foo' => 'bar', 'test' => 'barrrr'];
         $id = '10';
+
+        $validator = m::mock('Prettus\Validator\LaravelValidator');
+        $validator->shouldReceive('with')->with($attributes)->andReturn($validator);
+        $validator->shouldReceive('setId')->with($id)->andReturn($validator);
+        $validator->shouldReceive('passesOrFail')->with(ValidatorInterface::RULE_UPDATE);
+
+        $modelValid = m::mock(Model::class);
+        $modelValid->shouldReceive('forceFill')->once()->with($input)->andReturn($modelValid);
+        $modelValid->shouldReceive('toArray')->once()->andReturn($toArray);
+        $this->model->shouldReceive('newInstance')->once()->ordered()->andReturn($modelValid);
 
         $new_model = m::mock(Model::class);
         $new_model->shouldReceive('fill')->once()->with($attributes)->andReturn($new_model);
         $new_model->shouldReceive('save')->once();
-
-        $this->model->shouldReceive('fill')->once()->andReturn($this->model);
-        $this->model->shouldReceive('toArray')->once()->andReturn(['foo' => 'bar']);
-        $this->model->shouldReceive('findOrFail')->once()->with($id)->andReturn($new_model);
+        $this->model->shouldReceive('findOrFail')->once()->ordered()->with($id)->andReturn($new_model);
 
         $events = m::mock('events');
         $events->shouldReceive('fire')->once();
         $this->app->instance('events', $events);
 
         $repo = new StubAbstractRepository($this->app);
+        $repo->makeValidator($validator);
 
         $this->assertEquals($new_model, $repo->update($input, $id));
     }

@@ -7,6 +7,9 @@ use Prettus\Repository\Eloquent\BaseRepository;
 use NwLaravel\Repositories\RepositoryInterface;
 use NwLaravel\Repositories\Criterias\InputCriteria;
 use NwLaravel\Resultset\BuilderResultset;
+use Prettus\Validator\Contracts\ValidatorInterface;
+use Prettus\Repository\Events\RepositoryEntityCreated;
+use Prettus\Repository\Events\RepositoryEntityUpdated;
 use BadMethodCallException;
 use RuntimeException;
 
@@ -339,9 +342,23 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
      */
     public function create(array $attributes)
     {
-        $model = $this->makeModel()->fill($attributes);
-        $attributes = array_merge($attributes, $model->toArray());
-        return parent::create($attributes);
+        if (!is_null($this->validator)) {
+            // we should pass data that has been casts by the model
+            // to make sure data type are same because validator may need to use
+            // this data to compare with data that fetch from database.
+            $model = $this->model->newInstance()->forceFill($attributes);
+            $attributes = array_merge($attributes, $model->toArray());
+
+            $this->validator->with($attributes)->passesOrFail(ValidatorInterface::RULE_CREATE);
+        }
+
+        $model = $this->model->newInstance($attributes);
+        $model->save();
+        $this->resetModel();
+
+        event(new RepositoryEntityCreated($this, $model));
+
+        return $this->parserResult($model);
     }
 
     /**
@@ -354,8 +371,31 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
      */
     public function update(array $attributes, $id)
     {
-        $model = $this->makeModel()->fill($attributes);
-        $attributes = array_merge($attributes, $model->toArray());
-        return parent::update($attributes, $id);
+        $this->applyScope();
+
+        if (!is_null($this->validator)) {
+            // we should pass data that has been casts by the model
+            // to make sure data type are same because validator may need to use
+            // this data to compare with data that fetch from database.
+            $model = $this->model->newInstance()->forceFill($attributes);
+            $attributes = array_merge($attributes, $model->toArray());
+
+            $this->validator->with($attributes)->setId($id)->passesOrFail(ValidatorInterface::RULE_UPDATE);
+        }
+
+        $temporarySkipPresenter = $this->skipPresenter;
+
+        $this->skipPresenter(true);
+
+        $model = $this->model->findOrFail($id);
+        $model->fill($attributes);
+        $model->save();
+
+        $this->skipPresenter($temporarySkipPresenter);
+        $this->resetModel();
+
+        event(new RepositoryEntityUpdated($this, $model));
+
+        return $this->parserResult($model);
     }
 }
