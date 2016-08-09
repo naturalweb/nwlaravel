@@ -706,3 +706,13 @@ if (! function_exists('fileSystemAsset')) {
         return $url;
     }
 }
+
+if (! function_exists('activity')) {
+    /**
+     * Activity
+     */
+    function activity($action, $description, $model = null)
+    {
+        return app('nwlaravel.activitylog')->log($action, $description, $model);
+    }
+}

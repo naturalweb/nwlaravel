@@ -308,4 +308,16 @@ class HelpersTest extends TestCase
         $this->assertEquals('AAA', numberLetra(703));
         $this->assertEquals('AAB', numberLetra(704));
     }
+
+    public function testActivityLog()
+    {
+        $model = new \StdClass;
+        $model->id = 11;
+
+        $activityManager = m::mock('NwLaravel\ActivityLog\ActivityManager');
+        $activityManager->shouldReceive('log')->once()->with('created', 'desc foo bar', $model)->andReturn(true);
+        $this->app->instance('nwlaravel.activitylog', $activityManager);
+
+        $this->assertTrue(activity('created', 'desc foo bar', $model));
+    }
 }

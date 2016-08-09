@@ -8,7 +8,8 @@ use NwLaravel\Validation\ValidatorResolver;
 use Illuminate\Support\ServiceProvider;
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Translation\Loader\ArrayLoader;
-
+use NwLaravel\Activity\ActivityManager;
+use NwLaravel\ActivityLog\Commands\CleanLogCommand;
 /**
  * Class NwLaravelServiceProvider
  */
@@ -31,13 +32,29 @@ class NwLaravelServiceProvider extends ServiceProvider
         // Publish config files
         $this->publishes([
             __DIR__.'/../../config/nwlaravel.php' => config_path('nwlaravel.php'),
-        ]);
+        ], 'config');
 
         $this->bootValidator();
         $this->bootTranslatorCarbon();
+        $this->bootActivityLog();
         $this->bootOlxDriver();
     }
 
+    /**
+     * Register the service provider.
+     *
+     * @return void
+     */
+    public function register()
+    {
+        $this->registerActivityLog();
+    }
+
+    /**
+     * Boot Translator Carbon
+     *
+     * @return void
+     */
     protected function bootTranslatorCarbon()
     {
         $locale = $this->app['config']->get('app.locale');
@@ -51,6 +68,11 @@ class NwLaravelServiceProvider extends ServiceProvider
         }
     }
 
+    /**
+     * Boot Validator
+     *
+     * @return void
+     */
     protected function bootValidator()
     {
         $this->app['validator']->resolver(function ($translator, $data, $rules, $messages, $customAttributes) {
@@ -58,6 +80,47 @@ class NwLaravelServiceProvider extends ServiceProvider
         });
     }
 
+    /**
+     * Boot Activity Log
+     *
+     * @return void
+     */
+    protected function bootActivityLog()
+    {
+        // Publish migration
+        $files = glob(database_path('/migrations/*_create_activity_log_table.php'));
+        if (count($files) == 0) {
+            $timestamp = date('Y_m_d_His', time());
+            $this->publishes([
+                __DIR__ . "/../../migrations/create_activity_log_table.stub" => database_path("/migrations/{$timestamp}_create_activity_log_table.php"),
+            ], 'migrations');
+        }
+    }
+
+    /**
+     * Registero Activity Log
+     *
+     * @return void
+     */
+    protected function registerActivityLog()
+    {
+        $config = $this->app['config'];
+        $handler = $this->app->make($config->get('nwlaravel.activity.handler'));
+        $activityManager = new ActivityManager($handler, $this->app['auth'], $config);
+
+        $this->app->bind('nwlaravel.activity', $activityManager);
+        $this->app->alias('nwlaravel.activity', ActivityManager::class);
+
+        $cleanLogCommand = new CleanLogCommand;
+        $this->app->bind('nwlaravel.command.activity:clean', $cleanLogCommand);
+        $this->commands(['nwlaravel.command.activity:clean']);
+    }
+
+    /**
+     * Boot OlxDriver
+     *
+     * @return void
+     */
     protected function bootOlxDriver()
     {
         if (class_exists(Socialite::class)) {
@@ -71,15 +134,5 @@ class NwLaravelServiceProvider extends ServiceProvider
                 );
             });
         }
-    }
-    
-    /**
-     * Register the service provider.
-     *
-     * @return void
-     */
-    public function register()
-    {
-        //
     }
 }
