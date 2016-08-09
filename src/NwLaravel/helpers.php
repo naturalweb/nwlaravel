@@ -713,6 +713,6 @@ if (! function_exists('activity')) {
      */
     function activity($action, $description, $model = null)
     {
-        return app('nwlaravel.activitylog')->log($action, $description, $model);
+        return app('nwlaravel.activity')->log($action, $description, $model);
     }
 }

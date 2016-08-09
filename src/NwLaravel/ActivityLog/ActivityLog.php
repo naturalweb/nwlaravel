@@ -23,6 +23,21 @@ class ActivityLog extends AbstractEntity
     protected $table = "activity_log";
 
     /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'action',
+        'user_id',
+        'description',
+        'details',
+        'ip_address',
+        'content_type',
+        'content_id',
+    ];
+
+    /**
      * @var array
      */
     protected $columns = [
