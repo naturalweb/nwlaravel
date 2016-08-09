@@ -25,6 +25,7 @@ class CleanLogCommand extends Command
      */
     public function __construct(ActivityManager $activity)
     {
+        parent::__construct();
         $this->activity = $activity;
     }
 

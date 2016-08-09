@@ -119,15 +119,16 @@ class NwLaravelServiceProvider extends ServiceProvider
      */
     protected function registerActivityLog()
     {
-        $config = $this->app['config'];
-        $handler = $this->app->make($config->get('nwlaravel.activity.handler'));
-        $activityManager = new ActivityManager($handler, $this->app['auth'], $config);
+        $this->app->singleton('nwlaravel.activity', function ($app) {
+            $handler = $app->make($app['config']->get('nwlaravel.activity.handler'));
+            return new ActivityManager($handler, $app['auth'], $app['config']);
+        });
 
-        $this->app->bind('nwlaravel.activity', $activityManager);
+        $this->app->singleton('nwlaravel.command.activity:clean', function ($app) {
+            return new CleanLogCommand($app['nwlaravel.activity']);
+        });
+
         $this->app->alias('nwlaravel.activity', ActivityManager::class);
-
-        $cleanLogCommand = new CleanLogCommand;
-        $this->app->bind('nwlaravel.command.activity:clean', $cleanLogCommand);
         $this->commands(['nwlaravel.command.activity:clean']);
     }
 
