@@ -29,10 +29,7 @@ class NwLaravelServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        // Publish config files
-        $this->publishes([
-            __DIR__.'/../../config/nwlaravel.php' => config_path('nwlaravel.php'),
-        ], 'config');
+        $this->bootPublishConfig();
 
         $this->bootValidator();
         $this->bootTranslatorCarbon();
@@ -48,6 +45,24 @@ class NwLaravelServiceProvider extends ServiceProvider
     public function register()
     {
         $this->registerActivityLog();
+    }
+
+    /**
+     * Boot Publish Config
+     *
+     * @return void
+     */
+    public function bootPublishConfig()
+    {
+        // Publish config files
+        $this->publishes([
+            __DIR__.'/../../config/nwlaravel.php' => config_path('nwlaravel.php'),
+        ], 'config');
+
+        // Merge config files
+        $this->mergeConfigFrom(
+            __DIR__.'/../config/nwlaravel.php', 'nwlaravel'
+        );
     }
 
     /**
