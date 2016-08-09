@@ -61,7 +61,7 @@ class NwLaravelServiceProvider extends ServiceProvider
 
         // Merge config files
         $this->mergeConfigFrom(
-            __DIR__.'/../config/nwlaravel.php', 'nwlaravel'
+            __DIR__.'/../../config/nwlaravel.php', 'nwlaravel'
         );
     }
 
