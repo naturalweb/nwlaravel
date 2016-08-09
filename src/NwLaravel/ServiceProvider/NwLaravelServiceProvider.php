@@ -8,7 +8,7 @@ use NwLaravel\Validation\ValidatorResolver;
 use Illuminate\Support\ServiceProvider;
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Translation\Loader\ArrayLoader;
-use NwLaravel\Activity\ActivityManager;
+use NwLaravel\ActivityLog\ActivityManager;
 use NwLaravel\ActivityLog\Commands\CleanLogCommand;
 /**
  * Class NwLaravelServiceProvider
