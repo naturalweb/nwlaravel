@@ -261,10 +261,6 @@ class StorageManager
         $sufix = '';
         $count = 1;
         do {
-            if ($count > 100) {
-                throw new \Exception("Loop Infinite File {$filename}");
-            }
-
             $name = "{$nameOriginal}{$sufix}.{$extension}";
             $filename = "{$folder}{$name}";
             $sufix = "({$count})";
