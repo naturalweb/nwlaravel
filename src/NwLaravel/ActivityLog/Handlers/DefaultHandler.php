@@ -36,13 +36,21 @@ class DefaultHandler implements HandlerInterface
      */
     public function log($action, $description, $content = null, Authenticatable $user = null, Request $request = null)
     {
-        $user_id = $user ? $user->getAuthIdentifier() : null;
+        $user_id = null;
+        $user_name = '';
+        if ($user) {
+            $user_id = $user->getAuthIdentifier();
+            $field_username = config('nwlaravel.activity.field_username');
+            $user_name = (isset($user->{$field_username})) ? $user->{$field_username} : '';
+        }
+        
         $content_type = is_object($content) ? get_class($content) : null;
         $content_id = is_object($content) ? $content->id : null;
 
         $data = [
             'action' => $action,
             'user_id' => $user_id,
+            'user_name' => $user_name,
             'description' => $description,
             // 'details' => null,
             'ip_address' => $request->ip(),

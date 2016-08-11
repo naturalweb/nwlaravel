@@ -316,7 +316,7 @@ class HelpersTest extends TestCase
 
         $activityManager = m::mock('NwLaravel\ActivityLog\ActivityManager');
         $activityManager->shouldReceive('log')->once()->with('created', 'desc foo bar', $model)->andReturn(true);
-        $this->app->instance('nwlaravel.activitylog', $activityManager);
+        $this->app->instance('nwlaravel.activity', $activityManager);
 
         $this->assertTrue(activity('created', 'desc foo bar', $model));
     }

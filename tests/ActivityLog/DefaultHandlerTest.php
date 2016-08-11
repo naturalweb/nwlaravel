@@ -28,6 +28,7 @@ class DefaultHandlerTest extends TestCase
         $data = [
             'action' => 'created',
             'user_id' => 2,
+            'user_name' => 'caused name',
             'description' => 'foo-bar',
             'ip_address' => '192.168.25.25',
             'content_type' => 'stdClass',
@@ -36,11 +37,19 @@ class DefaultHandlerTest extends TestCase
         $model = m::mock('NwLaravel\ActivityLog\ActivityLog');
         $model->shouldReceive('create')->once()->with($data)->andReturn(true);
 
+        $config = m::mock('Illuminate\Config\Repository');
+        $config->shouldReceive('get')
+            ->once()
+            ->with('nwlaravel.activity.field_username', null)
+            ->andReturn('username');
+        $this->app->instance('config', $config);
+
         $content = new \stdClass;
         $content->id = 4;
 
         $user = m::mock('Illuminate\Contracts\Auth\Authenticatable');
         $user->shouldReceive('getAuthIdentifier')->once()->andReturn(2);
+        $user->username = 'caused name';
 
         $request = m::mock('Illuminate\Http\Request');
         $request->shouldReceive('ip')->once()->andReturn('192.168.25.25');

@@ -25,9 +25,10 @@ return [
     |
     */
     'activity' => [
-        'deleteOlderThanMonths' => 3,
-        'auth_guard' => null,
         'handler' => \NwLaravel\ActivityLog\Handlers\DefaultHandler::class,
+        'field_username' => 'username',
+        'auth_guard' => null,
+        'deleteOlderThanMonths' => 3,
         'action_icon' => [
             'element'      => 'span',
             'class_prefix' => 'fa fa-',
