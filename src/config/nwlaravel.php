@@ -25,10 +25,13 @@ return [
     |
     */
     'activity' => [
-        'handler' => \NwLaravel\ActivityLog\Handlers\DefaultHandler::class,
-        'field_username' => 'username',
-        'auth_guard' => null,
         'deleteOlderThanMonths' => 3,
+        'auth_guard' => null,
+        'field_username' => 'username',
+        'handler' => \NwLaravel\ActivityLog\Handlers\DefaultHandler::class,
+        'content_types' => [
+            //
+        ],
         'action_icon' => [
             'element'      => 'span',
             'class_prefix' => 'fa fa-',

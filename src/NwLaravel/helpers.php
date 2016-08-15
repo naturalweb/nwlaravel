@@ -709,7 +709,13 @@ if (! function_exists('fileSystemAsset')) {
 
 if (! function_exists('activity')) {
     /**
-     * Activity
+     * Log activity
+     *
+     * @param string    $action
+     * @param string    $description
+     * @param \Eloquent $model
+     *
+     * @return bool
      */
     function activity($action, $description, $model = null)
     {

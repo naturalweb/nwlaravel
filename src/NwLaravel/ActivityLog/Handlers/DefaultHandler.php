@@ -40,8 +40,8 @@ class DefaultHandler implements HandlerInterface
         $user_name = '';
         if ($user) {
             $user_id = $user->getAuthIdentifier();
-            $field_username = config('nwlaravel.activity.field_username');
-            $user_name = (isset($user->{$field_username})) ? $user->{$field_username} : '';
+            $field_username = config('nwlaravel.activity.field_username', 'username');
+            $user_name = ($field_username && isset($user->{$field_username})) ? (string) $user->{$field_username} : '';
         }
         
         $content_type = is_object($content) ? get_class($content) : null;
@@ -52,7 +52,6 @@ class DefaultHandler implements HandlerInterface
             'user_id' => $user_id,
             'user_name' => $user_name,
             'description' => $description,
-            // 'details' => null,
             'ip_address' => $request->ip(),
             'content_type' => $content_type,
             'content_id' => $content_id,

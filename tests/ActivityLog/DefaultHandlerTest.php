@@ -40,7 +40,7 @@ class DefaultHandlerTest extends TestCase
         $config = m::mock('Illuminate\Config\Repository');
         $config->shouldReceive('get')
             ->once()
-            ->with('nwlaravel.activity.field_username', null)
+            ->with('nwlaravel.activity.field_username', 'username')
             ->andReturn('username');
         $this->app->instance('config', $config);
 
