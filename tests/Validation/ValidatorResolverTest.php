@@ -62,6 +62,26 @@ class ValidatorResolverTest extends TestCase
         $this->assertFalse($this->resolver->validateCnpj('foobar', '00112233/0111-59', []));
     }
 
+    public function testValidateNotExistsShouldReceiveFalse()
+    {
+        $mock = m::mock('Illuminate\Validation\PresenceVerifierInterface');
+        $mock->shouldReceive('setConnection')->once()->with(null);
+        $mock->shouldReceive('getCount')->once()->with('users', 'foobar', '1', null, null, [])->andReturn(true);
+        $this->resolver->setPresenceVerifier($mock);
+
+        $this->assertFalse($this->resolver->validateNotExists('foobar', '1', ['users']));
+    }
+
+    public function testValidateNotExistsShouldReceiveTrue()
+    {
+        $mock = m::mock('Illuminate\Validation\PresenceVerifierInterface');
+        $mock->shouldReceive('setConnection')->once()->with(null);
+        $mock->shouldReceive('getCount')->once()->with('users', 'foobar', '1', null, null, [])->andReturn(false);
+        $this->resolver->setPresenceVerifier($mock);
+
+        $this->assertTrue($this->resolver->validateNotExists('foobar', '1', ['users']));
+    }
+
     public function testCallThrowBadMethodCallException()
     {
         $this->setExpectedException("BadMethodCallException", "Method [validateXptoInvalid] does not exist.");

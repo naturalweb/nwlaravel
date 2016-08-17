@@ -61,6 +61,19 @@ class ValidatorResolver extends BaseValidator
     }
 
     /**
+     * Validate the not existence of an attribute value in a database table.
+     *
+     * @param  string  $attribute
+     * @param  mixed   $value
+     * @param  array   $parameters
+     * @return bool
+     */
+    public function validateNotExists($attribute, $value, $parameters)
+    {
+        return !$this->validateExists($attribute, $value, $parameters);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function __call($method, $parameters)
