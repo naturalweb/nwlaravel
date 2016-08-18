@@ -3,7 +3,7 @@
 namespace NwLaravel\Validation;
 
 use ReflectionClass;
-use Illuminate\Validation\Validator as BaseValidator;
+use Illuminate\Validation\Validator;
 
 /**
  * Class ValidatorResolver
@@ -11,7 +11,7 @@ use Illuminate\Validation\Validator as BaseValidator;
  * @method bool validateCpf(string $attribute, mixed $value, array $parameters)
  * @method bool validateCnpj(string $attribute, mixed $value, array $parameters)
  */
-class ValidatorResolver extends BaseValidator
+class ValidatorResolver extends Validator
 {
     /**
      * Validate Pattern Valid
