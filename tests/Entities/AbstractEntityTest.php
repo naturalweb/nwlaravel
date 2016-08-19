@@ -95,10 +95,20 @@ class AbstractEntityTest extends TestCase
 
         $data = new \DateTime('2015-12-25 14:05:39');
         $this->assertEquals('2015-12-25 14:05:39', $entity->fromDateTime($data));
+
+        $data = '26/02/2015';
+        $this->assertEquals('2015-02-26 00:00:00', $entity->fromDateTime($data));
+
+        $data = '31/02/2016';
+        $this->assertNull($entity->fromDateTime($data));
     }
 
     public function testMethodAsDateTime()
     {
+        $grammar = m::mock('Illuminate\Database\Grammar');
+        $grammar->shouldReceive('getDateFormat')->andReturn('Y-m-d H:i:s');
+        DB::shouldReceive('getQueryGrammar')->andReturn($grammar);
+        
         $this->config = m::mock('config');
         $this->config->shouldReceive('get')->with('nwlaravel.date_format', null)->andReturn('d/m/Y');
         $this->app->instance('config', $this->config);
@@ -107,6 +117,12 @@ class AbstractEntityTest extends TestCase
 
         $data = '2015-12-25 14:05:39';
         $this->assertEquals(new \Carbon\Carbon('2015-12-25 14:05:39'), $entity->asDateTime($data));
+
+        $data = '26/02/2015';
+        $this->assertEquals('2015-02-26 00:00:00', $entity->asDateTime($data));
+
+        $data = '31/02/2016';
+        $this->assertNull($entity->asDateTime($data));
     }
 
     public function testScopeWhereCriteria()
