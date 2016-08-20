@@ -676,37 +676,6 @@ if (! function_exists('linkRoute')) {
     }
 }
 
-if (! function_exists('fileSystemAsset')) {
-    /**
-     * File System Asset
-     *
-     * @param string $path String Path
-     *
-     * @return string
-     */
-    function fileSystemAsset($path)
-    {
-        $default = config('filesystems.default');
-
-        switch ($default) {
-            case 'ftp':
-                $url = trim(config('filesystems.disks.ftp.url'), '/').'/'.$path;
-                break;
-            case 'sftp':
-                $url = trim(config('filesystems.disks.sftp.url'), '/').'/'.$path;
-                break;
-            case 's3':
-                $url = trim(config('filesystems.disks.s3.url'), '/').'/'.$path;
-                break;
-            case 'local':
-            default:
-                $url = asset('storage/'.$path);
-        }
-
-        return $url;
-    }
-}
-
 if (! function_exists('activity')) {
     /**
      * Log activity

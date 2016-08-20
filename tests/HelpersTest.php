@@ -264,26 +264,6 @@ class HelpersTest extends TestCase
         $this->assertEquals($urlExpected, linkRoute('nameRoute', 'CliqueAqui'));
     }
 
-    public function testFileSystemAssetFtp()
-    {
-        $url = m::mock('url');
-        $url->shouldReceive('asset')->with("storage/local.png", null)->andReturn('/storagel/local.png');
-        $this->app->instance('url', $url);
-
-        $this->config->shouldReceive('get')->once()->ordered()->with('filesystems.default', null)->andReturn('local');
-        $this->config->shouldReceive('get')->once()->ordered()->with('filesystems.default', null)->andReturn('ftp');
-        $this->config->shouldReceive('get')->once()->ordered()->with('filesystems.disks.ftp.url', null)->andReturn('http://xpto');
-        $this->config->shouldReceive('get')->once()->ordered()->with('filesystems.default', null)->andReturn('s3');
-        $this->config->shouldReceive('get')->once()->ordered()->with('filesystems.disks.s3.url', null)->andReturn('https://aws-s3');
-        $this->config->shouldReceive('get')->once()->ordered()->with('filesystems.default', null)->andReturn('sftp');
-        $this->config->shouldReceive('get')->once()->ordered()->with('filesystems.disks.sftp.url', null)->andReturn('http://outer');
-
-        $this->assertEquals('/storagel/local.png', fileSystemAsset('local.png'));
-        $this->assertEquals('http://xpto/img/test.png', fileSystemAsset('img/test.png'));
-        $this->assertEquals('https://aws-s3/img/test.png', fileSystemAsset('img/test.png'));
-        $this->assertEquals('http://outer/img/test.png', fileSystemAsset('img/test.png'));
-    }
-
     public function testNumberRoman()
     {
         $this->assertEquals('0', numberRoman(0));
