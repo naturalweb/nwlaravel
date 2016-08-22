@@ -29,12 +29,34 @@ class ValidatorResolverTest extends TestCase
         $this->assertTrue($this->resolver->validatePattern('foobar', '/[0-z]+/', []));
     }
 
-    public function testValidateCurrentPassword()
+    public function testValidateCurrentPasswordWithGuardAndField()
     {
-        $hash = '$2y$07$BCryptRequires22Chrcte/VlQH0piJtjXl.0t1XkA8pw9dMXTpOq';
+        $user = new \stdClass;
+        $user->pass = '$2y$07$BCryptRequires22Chrcte/VlQH0piJtjXl.0t1XkA8pw9dMXTpOq';
 
-        $this->assertTrue($this->resolver->validateCurrentPassword('foobar', 'rasmuslerdorf', [$hash]));
-        $this->assertFalse($this->resolver->validateCurrentPassword('foobar', '0rasmuslerdorf', [$hash]));
+        $auth = m::mock('Illuminate\Contracts\Auth\Factory');
+        $auth->shouldReceive('guard')->twice()->with('users')->andReturn($auth);
+        $auth->shouldReceive('user')->twice()->andReturn($user);
+
+        $this->app->instance('Illuminate\Contracts\Auth\Factory', $auth);
+
+        $this->assertTrue($this->resolver->validateCurrentPassword('foobar', 'rasmuslerdorf', ['users', 'pass']));
+        $this->assertFalse($this->resolver->validateCurrentPassword('foobar', '0rasmuslerdorf', ['users', 'pass']));
+    }
+
+    public function testValidateCurrentPasswordWithoutGuard()
+    {
+        $user = new \stdClass;
+        $user->password = '$2y$07$BCryptRequires22Chrcte/VlQH0piJtjXl.0t1XkA8pw9dMXTpOq';
+
+        $auth = m::mock('Illuminate\Contracts\Auth\Factory');
+        $auth->shouldReceive('guard')->never();
+        $auth->shouldReceive('user')->twice()->andReturn($user);
+
+        $this->app->instance('Illuminate\Contracts\Auth\Factory', $auth);
+
+        $this->assertTrue($this->resolver->validateCurrentPassword('foobar', 'rasmuslerdorf'));
+        $this->assertFalse($this->resolver->validateCurrentPassword('foobar', '0rasmuslerdorf'));
     }
 
     public function testValidateDocument()

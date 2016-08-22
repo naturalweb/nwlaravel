@@ -38,7 +38,9 @@ class ValidatorResolver extends Validator
      */
     public function validateCurrentPassword($attribute, $value, $parameters = array())
     {
-        return password_verify($value, $parameters[0]);
+        $guard = isset($parameters[0]) ? $parameters[0] : null;
+        $field = isset($parameters[1]) ? $parameters[1] : 'password';
+        return password_verify($value, auth($guard)->user()->{$field});
     }
 
     /**
