@@ -47,7 +47,7 @@ interface RepositoryInterface extends BaseInterface
      * @param string $column    String Column
      * @param string $direction String Direction
      *
-     * @return AbstractRepository
+     * @return RepositoryInterface
      */
     public function orderBy($column, $direction = 'asc');
 
@@ -114,7 +114,7 @@ interface RepositoryInterface extends BaseInterface
      *
      * @param array $input Array Input
      *
-     * @return Builder
+     * @return RepositoryInterface
      */
     public function whereInputCriteria(array $input = array());
 

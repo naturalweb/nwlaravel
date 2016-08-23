@@ -358,15 +358,45 @@ class AbstractRepositoryTest extends TestCase
         $this->model
             ->shouldReceive('orderBy')
             ->once()
+            ->with('name', 'DESC')
+            ->andReturn($this->model);
+
+        $repo = new StubAbstractRepository($this->app);
+
+        $this->assertEquals($repo, $repo->orderBy('name DESC'));
+    }
+
+    public function testOrderByOnlyName()
+    {
+        $lists = ['1' => 'Foo', '2' => 'Bar'];
+
+        $this->model
+            ->shouldReceive('orderBy')
+            ->once()
             ->with('name', 'ASC')
             ->andReturn($this->model);
 
         $repo = new StubAbstractRepository($this->app);
 
-        $this->assertEquals($repo, $repo->orderBy('name ASC'));
+        $this->assertEquals($repo, $repo->orderBy('name'));
     }
 
-    public function testOrderByWithNewQuery()
+    public function testOrderBySortInvalid()
+    {
+        $lists = ['1' => 'Foo', '2' => 'Bar'];
+
+        $this->model
+            ->shouldReceive('orderBy')
+            ->once()
+            ->with('name', 'ASC')
+            ->andReturn($this->model);
+
+        $repo = new StubAbstractRepository($this->app);
+
+        $this->assertEquals($repo, $repo->orderBy('name foo'));
+    }
+
+    public function testGetQueryWithNewQuery()
     {
         $builder = m::mock(Builder::class);
 
@@ -380,7 +410,7 @@ class AbstractRepositoryTest extends TestCase
         $this->assertEquals($builder, $repo->getQuery());
     }
 
-    public function testOrderByWithBuilder()
+    public function testGetQueryWithBuilder()
     {
         $builder = m::mock(Builder::class);
 

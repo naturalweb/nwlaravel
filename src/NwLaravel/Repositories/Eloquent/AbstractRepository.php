@@ -147,7 +147,7 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
      * @param  string $columns   String Columns
      * @param  string $direction String Direction
      *
-     * @return $this
+     * @return RepositoryInterface
      */
     public function orderBy($columns, $direction = 'asc')
     {
@@ -160,8 +160,10 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
                 list($field, $sort) = array_values($column);
                 if (!empty($sort)) {
                     $direction = $sort;
-                    $this->model = $this->model->orderBy($field, $direction);
                 }
+                $direction = strtoupper($direction);
+                $direction = in_array($direction, ['ASC', 'DESC']) ? $direction : 'ASC';
+                $this->model = $this->model->orderBy($field, $direction);
             }
         }
 
@@ -309,11 +311,9 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
                 $statement = "DECLARE @rownum int; SET @rownum = 0";
                 $value = "(@rownum = @rownum+1)";
                 return $reorder($statement, $value);
-
-            case $conn instanceof \Illuminate\Database\SQLiteConnection:
-            default:
-                throw new RuntimeException(sprintf("Reorder not valid for connection (%s)", get_class($conn)));
         }
+
+        throw new RuntimeException(sprintf("Reorder not valid for connection (%s)", get_class($conn)));
     }
 
     /**
@@ -321,7 +321,7 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
      *
      * @param array $input Array Input
      *
-     * @return AbstractRepository
+     * @return RepositoryInterface
      */
     public function whereInputCriteria(array $input = array())
     {
