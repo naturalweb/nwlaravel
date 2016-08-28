@@ -10,6 +10,7 @@ use Symfony\Component\Translation\Translator;
 use Symfony\Component\Translation\Loader\ArrayLoader;
 use NwLaravel\ActivityLog\ActivityManager;
 use NwLaravel\ActivityLog\Commands\CleanLogCommand;
+
 /**
  * Class NwLaravelServiceProvider
  */
@@ -61,7 +62,8 @@ class NwLaravelServiceProvider extends ServiceProvider
 
         // Merge config files
         $this->mergeConfigFrom(
-            __DIR__.'/../../config/nwlaravel.php', 'nwlaravel'
+            __DIR__.'/../../config/nwlaravel.php',
+            'nwlaravel'
         );
     }
 

@@ -38,7 +38,7 @@ class CleanLogCommand extends Command
 
     /**
      * Handle Command
-     * 
+     *
      * @return void
      */
     public function handle()
