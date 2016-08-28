@@ -296,21 +296,30 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
                         ->update($data);
         };
 
+        $return = false;
+
         switch (true) {
             case $conn instanceof \Illuminate\Database\MySqlConnection:
                 $statement = "SET @rownum := 0";
                 $value = "(@rownum := @rownum+1)";
-                return $reorder($statement, $value);
+                $return = $reorder($statement, $value);
+                break;
 
             case $conn instanceof \Illuminate\Database\PostgresConnection:
                 $statement = "CREATE TEMPORARY SEQUENCE rownum_seq";
                 $value = "NETVAL('rownum_seq')";
-                return $reorder($statement, $value);
+                $return = $reorder($statement, $value);
+                break;
 
             case $conn instanceof \Illuminate\Database\SqlServerConnection:
                 $statement = "DECLARE @rownum int; SET @rownum = 0";
                 $value = "(@rownum = @rownum+1)";
-                return $reorder($statement, $value);
+                $return = $reorder($statement, $value);
+                break;
+        }
+
+        if ($return) {
+            return $return;
         }
 
         throw new RuntimeException(sprintf("Reorder not valid for connection (%s)", get_class($conn)));
