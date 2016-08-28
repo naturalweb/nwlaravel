@@ -27,9 +27,9 @@ abstract class BaseValidator extends LaravelValidator
     /**
      * Set Key Name
      *
-     * @param Key $keyName Key Name
+     * @param string $keyName
      *
-     * @return $this
+     * @return BaseValidator
      */
     public function setKeyName($keyName)
     {
@@ -41,7 +41,8 @@ abstract class BaseValidator extends LaravelValidator
      *
      * Default rule: ValidatorInterface::RULE_CREATE
      *
-     * @param null $action
+     * @param string|null $action
+     *
      * @return array
      */
     public function getRules($action = null)
@@ -58,8 +59,8 @@ abstract class BaseValidator extends LaravelValidator
     /**
      * Parser Validation Rules
      *
-     * @param Unknown $rules Rules
-     * @param null    $id    Null Id
+     * @param array    $rules
+     * @param int|null $id
      *
      * @return array
      */
@@ -77,7 +78,7 @@ abstract class BaseValidator extends LaravelValidator
 
             foreach ($rules as $ruleIdx => $rule) {
                 // get name and parameters
-                @list($name, $params) = array_pad(explode(":", $rule), 2, null);
+                list($name, $params) = array_pad(explode(":", $rule), 2, null);
 
                 // only do someting for the unique rule
                 if (strtolower($name) != "unique") {
