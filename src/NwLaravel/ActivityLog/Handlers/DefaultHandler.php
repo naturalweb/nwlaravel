@@ -46,18 +46,17 @@ class DefaultHandler implements HandlerInterface
         
         $content_type = is_object($content) ? get_class($content) : null;
         $content_id = is_object($content) ? $content->id : null;
+        $ip_address = $request->ip();
 
-        $data = [
+        return (bool) $this->model->create([
             'action' => $action,
             'user_id' => $user_id,
             'user_name' => $user_name,
             'description' => $description,
-            'ip_address' => $request->ip(),
+            'ip_address' => $ip_address,
             'content_type' => $content_type,
             'content_id' => $content_id,
-        ];
-
-        return (bool) $this->model->create($data);
+        ]);
     }
 
     /**

@@ -61,12 +61,13 @@ class ActivityLog extends AbstractEntity
     {
         $actionIcons = (array) config('nwlaravel.activity.action_icon');
         $icons = $actionIcons['icons'];
-
-        if (empty($this->action) || !isset($icons[$this->action])) {
+        $action = $this->getAttribute('action');
+        
+        if (empty($action) || !isset($icons[$action])) {
             return $icons['default'];
         }
 
-        return $icons[$this->action];
+        return $icons[$action];
     }
 
     /**
