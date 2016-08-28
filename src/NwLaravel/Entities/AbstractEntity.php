@@ -110,7 +110,7 @@ abstract class AbstractEntity extends Model implements Presentable
     public function fromDateTime($value)
     {
         $value = fromDateTime($value);
-        if (!$value) {
+        if (empty($value)) {
             return $value;
         }
         return parent::fromDateTime($value);
@@ -125,7 +125,7 @@ abstract class AbstractEntity extends Model implements Presentable
     public function asDateTime($value)
     {
         $value = asDateTime($value);
-        if (!$value) {
+        if (empty($value)) {
             return $value;
         }
 
