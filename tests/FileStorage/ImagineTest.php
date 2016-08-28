@@ -40,13 +40,12 @@ class ImagineTest extends TestCase
     public function testResizeWithScale()
     {
         $test = $this;
-        $app = $this->app;
 
         $mockImage = $this->createMockImage('path/image.jpg');
         $mockImage->shouldReceive('resize')
             ->once()
             ->andReturnUsing(
-                function ($width, $height, $callback) use ($test, $app) {
+                function ($width, $height, $callback) use ($test) {
                     $constraint = m::mock(Constraint::class);
                     $constraint->shouldReceive('aspectRatio')->once();
                     $constraint->shouldReceive('upsize')->once();
@@ -63,8 +62,22 @@ class ImagineTest extends TestCase
 
     public function testResizeForceSize()
     {
+        $test = $this;
+
         $mockImage = $this->createMockImage('path/image.jpg');
-        $mockImage->shouldReceive('resize')->once()->with(100, 200, null);
+        $mockImage->shouldReceive('resize')
+            ->once()
+            ->andReturnUsing(
+                function ($width, $height, $callback) use ($test) {
+                    $constraint = m::mock(Constraint::class);
+                    $constraint->shouldReceive('aspectRatio')->never();
+                    $constraint->shouldReceive('upsize')->never();
+
+                    $test->assertEquals(100, $width);
+                    $test->assertEquals(200, $height);
+                    $test->assertNull($callback($constraint));
+                }
+            );
 
         $imagine = new Imagine('path/image.jpg', $this->mockManager);
         $this->assertEquals($imagine, $imagine->resize(100, 200, true));

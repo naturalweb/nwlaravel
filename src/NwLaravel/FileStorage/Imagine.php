@@ -42,7 +42,7 @@ class Imagine
     {
         $width = intval($width);
         $height = intval($height);
-        $callback = null;
+        $callback = function () {};
 
         if ($width > 0 && $height > 0) {
             // AutoScale - aspectRatio
