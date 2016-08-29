@@ -68,7 +68,7 @@ class Imagine
     {
         $opacity = intval($opacity);
 
-        if ($opacity >= 0 && $opacity <= 100) {
+        if ($opacity > 0 && $opacity < 100) {
             $this->image->opacity($opacity);
         }
 
@@ -103,6 +103,23 @@ class Imagine
 
             $this->image->insert($watermark, $position);
         }
+
+        return $this;
+    }
+
+    /**
+     * Crop
+     *
+     * @param integer $width
+     * @param integer $height
+     * @param integer $x
+     * @param integer $y
+     *
+     * @return binary
+     */
+    public function crop($width, $height, $x, $y)
+    {
+        $this->image->crop($width, $height, $x, $y);
 
         return $this;
     }

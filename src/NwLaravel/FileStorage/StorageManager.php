@@ -211,14 +211,14 @@ class StorageManager
             $scale = isset($options['scale']) ? (bool) $options['scale'] : true;
             $opacity = isset($options['opacity']) ? (float) $options['opacity'] : null;
             $watermark = isset($options['watermark']) ? $options['watermark'] : null;
+            $quality = isset($options['quality']) ? intval($options['quality']) : 85; // Quality Deufault: 85;
             
             $imagine = $this->imagineFactory->make($pathImage);
             $imagine->resize($width, $height, !$scale);
             $imagine->opacity($opacity);
             $imagine->watermark($watermark);
                 
-            // Quality: 85;
-            $content = $imagine->encode($data['extension'], 85);
+            $content = $imagine->encode($data['extension'], $quality);
         } else {
             $content = file_get_contents($file);
         }

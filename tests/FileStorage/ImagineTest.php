@@ -107,7 +107,16 @@ class ImagineTest extends TestCase
         $mockImage->shouldReceive('opacity')->never();
 
         $imagine = new Imagine('path/image.jpg', $this->mockManager);
-        $this->assertEquals($imagine, $imagine->opacity(101));
+        $this->assertEquals($imagine, $imagine->opacity(100));
+    }
+
+    public function testOpacityZero()
+    {
+        $mockImage = $this->createMockImage('path/image.jpg');
+        $mockImage->shouldReceive('opacity')->never();
+
+        $imagine = new Imagine('path/image.jpg', $this->mockManager);
+        $this->assertEquals($imagine, $imagine->opacity(0));
     }
 
     public function testWatermarkDefault()
@@ -213,5 +222,14 @@ class ImagineTest extends TestCase
 
         $imagine = new Imagine('path/image.jpg', $this->mockManager);
         $this->assertTrue($imagine->save($output, 75));
+    }
+
+    public function testCrop()
+    {
+        $mockImage = $this->createMockImage('path/image.jpg');
+        $mockImage->shouldReceive('crop')->once()->with(100, 80, 25, 35)->andReturn($mockImage);
+
+        $imagine = new Imagine('path/image.jpg', $this->mockManager);
+        $this->assertEquals($imagine, $imagine->crop(100, 80, 25, 35));
     }
 }
