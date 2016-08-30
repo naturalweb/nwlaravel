@@ -83,13 +83,59 @@ class ImagineTest extends TestCase
         $this->assertEquals($imagine, $imagine->resize(100, 200, true));
     }
 
+    public function testResizeOnlyWidth()
+    {
+        $test = $this;
+
+        $mockImage = $this->createMockImage('path/image.jpg');
+        $mockImage->shouldReceive('resize')
+            ->once()
+            ->andReturnUsing(
+                function ($width, $height, $callback) use ($test) {
+                    $constraint = m::mock(Constraint::class);
+                    $constraint->shouldReceive('aspectRatio')->never();
+                    $constraint->shouldReceive('upsize')->never();
+
+                    $test->assertEquals(100, $width);
+                    $test->assertEquals(null, $height);
+                    $test->assertNull($callback($constraint));
+                }
+            );
+
+        $imagine = new Imagine('path/image.jpg', $this->mockManager);
+        $this->assertEquals($imagine, $imagine->resize(100, 0, true));
+    }
+
+    public function testResizeOnlyHeight()
+    {
+        $test = $this;
+        
+        $mockImage = $this->createMockImage('path/image.jpg');
+        $mockImage->shouldReceive('resize')
+            ->once()
+            ->andReturnUsing(
+                function ($width, $height, $callback) use ($test) {
+                    $constraint = m::mock(Constraint::class);
+                    $constraint->shouldReceive('aspectRatio')->never();
+                    $constraint->shouldReceive('upsize')->never();
+
+                    $test->assertEquals(null, $width);
+                    $test->assertEquals(200, $height);
+                    $test->assertNull($callback($constraint));
+                }
+            );
+
+        $imagine = new Imagine('path/image.jpg', $this->mockManager);
+        $this->assertEquals($imagine, $imagine->resize(0, 200, true));
+    }
+
     public function testResizeArgsInvalid()
     {
         $mockImage = $this->createMockImage('path/image.jpg');
         $mockImage->shouldReceive('resize')->never();
 
         $imagine = new Imagine('path/image.jpg', $this->mockManager);
-        $this->assertEquals($imagine, $imagine->resize(0, 200));
+        $this->assertEquals($imagine, $imagine->resize(0, 0));
     }
 
     public function testOpacity()

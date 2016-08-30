@@ -44,7 +44,7 @@ class Imagine
         $height = intval($height);
         $callback = function () {};
 
-        if ($width > 0 && $height > 0) {
+        if ($width > 0 || $height > 0) {
             // AutoScale - aspectRatio
             if (!$force) {
                 $callback = function ($constraint) {
@@ -53,6 +53,8 @@ class Imagine
                 };
             }
 
+            $width = $width?:null;
+            $height = $height?:null;
             $this->image->resize($width, $height, $callback);
         }
 
