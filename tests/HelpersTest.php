@@ -26,6 +26,21 @@ class HelpersTest extends TestCase
         $this->app->instance('config', $this->config);
     }
 
+    public function testAsCurrency()
+    {
+        $this->assertNull(asCurrency(''));
+        $this->assertNull(asCurrency('a'));
+        $this->assertNull(asCurrency('12.21,33'));
+        $this->assertNull(asCurrency('432.21,33'));
+
+        $this->assertEquals('1221.53', asCurrency('1.221,53'));
+        $this->assertEquals('1221.73', asCurrency('1,221.73'));
+        $this->assertEquals('431221.03', asCurrency('431.221,03'));
+        $this->assertEquals('2431221.03', asCurrency('2.431.221,03'));
+        $this->assertEquals('77524.99', asCurrency('77524.99'));
+        $this->assertEquals('54324.54', asCurrency('54324,54'));
+    }
+
     public function testAsDateTime()
     {
         $now = new \DateTime;

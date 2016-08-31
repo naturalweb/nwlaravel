@@ -11,6 +11,38 @@ use \Carbon\Carbon;
 use \Illuminate\Database\Eloquent\Model;
 use \Illuminate\Support\Facades\DB;
 
+if (! function_exists('asCurrency')) {
+    /**
+     * Return a timestamp as DateTime object.
+     *
+     * @param mixed $value Mixed Value
+     *
+     * @return Carbon
+     */
+    function asCurrency($value)
+    {
+        // Numeric Pt
+        $matchPt = (bool) preg_match('/^[0-9]{1,3}(\.[0-9]{3})*(\,[0-9]+)?$/', $value);
+        $matchNumericPt = (bool) preg_match('/^[0-9]+(\,[0-9]+)$/', $value);
+        if ($matchPt || $matchNumericPt) {
+            $value = str_replace('.', '', $value);
+            $value = str_replace(',', '.', $value);
+        }
+
+        $matchEn = (bool) preg_match('/^[0-9]{1,3}(,[0-9]{3})*(\.[0-9]+)?$/', $value);
+        if ($matchEn) {
+            $value = str_replace(',', '', $value);
+        }
+
+        $matchNumeric = (bool) preg_match('/^[0-9]+(\.[0-9]+)?$/', $value);
+        if ($matchNumeric) {
+            return doubleval($value);
+        }
+
+        return null;
+    }
+}
+
 if (! function_exists('asDateTime')) {
     /**
      * Return a timestamp as DateTime object.

@@ -132,4 +132,86 @@ class ValidatorResolverTest extends TestCase
 
         ];
     }
+
+    /**
+     * @dataProvider providerCurrencyPtBR
+     */
+    public function testCurrencyPtBr($value)
+    {
+        $this->assertTrue($this->resolver->validateCurrency('foobar', $value));
+    }
+
+    public function providerCurrencyPtBR()
+    {
+        return [
+            ['1,0'],
+            ['12,34'],
+            ['432,00'],
+            ['1.067,1'],
+            ['71.111,00'],
+            ['871.341,00'],
+            ['1.871.341,01'],
+            ['31.871.341,01'],
+            ['461.654.999,232'],
+            ['8.761.254.109,232'],
+            ['871341,0054'],
+        ];
+    }
+
+    /**
+     * @dataProvider providerCurrencyEn
+     */
+    public function testCurrencyEn($value)
+    {
+        $this->assertTrue($this->resolver->validateCurrency('foobar', $value));
+    }
+
+    public function providerCurrencyEn()
+    {
+        return [
+            ['0'],
+            ['1'],
+            ['143'],
+            ['985445'],
+            ['871341.030'],
+            ['1.0'],
+            ['12.34'],
+            ['432.00'],
+            ['1,067.1'],
+            ['71,111.00'],
+            ['871,341.0430'],
+            ['1,871,341.02221'],
+            ['31,871,341.01'],
+            ['461,654,999.22'],
+            ['8,761,254,109.22'],
+        ];
+    }
+
+    /**
+     * @dataProvider providerCurrencyInvalid
+     */
+    public function testCurrencyInvalid($value)
+    {
+        $this->assertFalse($this->resolver->validateCurrency('foobar', $value));
+    }
+
+    public function providerCurrencyInvalid()
+    {
+        return [
+            ['.0'],
+            [',40'],
+            ['143.'],
+            ['1e0'],
+            ['12#34'],
+            ['1.067.1'],
+            ['71,111,00'],
+            ['1,871.341.01'],
+            ['31.871,341.01'],
+            ['461,654,999,22'],
+            ['8,761.254,109.22'],
+            ['88,71.24,1.22'],
+            ['2,3143.2'],
+            ['33,31,43.00'],
+        ];
+    }
 }

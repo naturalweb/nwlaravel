@@ -63,6 +63,20 @@ class ValidatorResolver extends Validator
     }
 
     /**
+     * Validate currency
+     *
+     * @param string $attribute String Attribute
+     * @param mixed  $value     Mixed Value
+     * @param array  $parameters Array Parameters
+     *
+     * @return bool
+     */
+    public function validateCurrency($attribute, $value, $parameters = array())
+    {
+        return !is_null(asCurrency($value));
+    }
+
+    /**
      * Validate the not existence of an attribute value in a database table.
      *
      * @param  string  $attribute
