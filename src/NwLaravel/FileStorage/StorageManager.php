@@ -218,7 +218,7 @@ class StorageManager
             $imagine->opacity($opacity);
             $imagine->watermark($watermark);
                 
-            $content = $imagine->encode($data['extension'], $quality);
+            $content = $imagine->encode($data['extension'], $quality)->getEncoded();
         } else {
             $content = file_get_contents($file);
         }

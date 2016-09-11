@@ -253,10 +253,10 @@ class ImagineTest extends TestCase
     public function testEncode()
     {
         $mockImage = $this->createMockImage('path/image.jpg');
-        $mockImage->shouldReceive('encode')->once()->with('jpg', 80)->andReturn('contents-binary');
+        $mockImage->shouldReceive('encode')->once()->with('jpg', 80)->andReturn($mockImage);
 
         $imagine = new Imagine('path/image.jpg', $this->mockManager);
-        $this->assertEquals('contents-binary', $imagine->encode('jpg', 80));
+        $this->assertEquals($mockImage, $imagine->encode('jpg', 80));
     }
 
     public function testSave()

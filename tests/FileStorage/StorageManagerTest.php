@@ -7,6 +7,7 @@ use Mockery as m;
 use NwLaravel\FileStorage\StorageManager;
 use NwLaravel\FileStorage\Imagine;
 use NwLaravel\FileStorage\ImagineFactory;
+use Intervention\Image\Image;
 use Illuminate\Contracts\Filesystem\Filesystem as Storage;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
@@ -216,6 +217,8 @@ class StorageManagerTest extends TestCase
         $file = new UploadedFile($pathfile, basename($pathfile), 'image/png', $size);
         $options = ['width' => 50, 'height' => 25, 'scale' => false, 'opacity' => 30, 'watermark' => $pathwater, 'quality' => 77];
         $content = 'conteudo binary image';
+        $mockImage = m::mock(Image::class);
+        $mockImage->shouldReceive('getEncoded')->once()->andReturn($content);
 
         $mockStorage = m::mock(Storage::class);
         $mockStorage->shouldReceive('makeDirectory')->once()->ordered()->with("{$folderUpload}/")->andReturn(true);
@@ -226,7 +229,7 @@ class StorageManagerTest extends TestCase
         $mockImagine->shouldReceive('resize')->once()->with(50, 25, true)->andReturn($mockImagine);
         $mockImagine->shouldReceive('opacity')->once()->with(30)->andReturn($mockImagine);
         $mockImagine->shouldReceive('watermark')->once()->with($pathwater)->andReturn($mockImagine);
-        $mockImagine->shouldReceive('encode')->once()->with('png', 77)->andReturn($content);
+        $mockImagine->shouldReceive('encode')->once()->with('png', 77)->andReturn($mockImage);
 
         $mockFactory = m::mock(ImagineFactory::class);
         $mockFactory->shouldReceive('make')->once()->with($pathfile)->andReturn($mockImagine);
