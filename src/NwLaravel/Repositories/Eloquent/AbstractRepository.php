@@ -121,27 +121,6 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
     }
 
     /**
-     * Handle dynamic method calls into the method.
-     *
-     * @param  string  $method
-     * @param  array   $parameters
-     * @return mixed
-     *
-     * @throws BadMethodCallException
-     */
-    public function __call($method, $parameters)
-    {
-        $pattern = '/^(((where|orWhere).*)|groupBy|join|leftJoin|rightJoin|crossJoin)$/';
-        if (preg_match($pattern, $method)) {
-            call_user_func_array([$this->model, $method], $parameters);
-            return $this;
-        }
-
-        $className = static::class;
-        throw new BadMethodCallException("Call to undefined method {$className}::{$method}()");
-    }
-
-    /**
      * Add an "order by" clause to the query.
      *
      * @param  string $columns   String Columns
@@ -406,5 +385,26 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
         event(new RepositoryEntityUpdated($this, $model));
 
         return $this->parserResult($model);
+    }
+
+    /**
+     * Handle dynamic method calls into the method.
+     *
+     * @param  string  $method
+     * @param  array   $parameters
+     * @return mixed
+     *
+     * @throws BadMethodCallException
+     */
+    public function __call($method, $parameters)
+    {
+        $pattern = '/^(((where|orWhere).*)|limit|groupBy|join|leftJoin|rightJoin|crossJoin)$/';
+        if (preg_match($pattern, $method)) {
+            call_user_func_array([$this->model, $method], $parameters);
+            return $this;
+        }
+
+        $className = static::class;
+        throw new BadMethodCallException("Call to undefined method {$className}::{$method}()");
     }
 }

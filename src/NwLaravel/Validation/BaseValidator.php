@@ -82,6 +82,12 @@ abstract class BaseValidator extends LaravelValidator
 
                 // only do someting for the unique rule
                 if (strtolower($name) != "unique") {
+                    if (preg_match('/\[(.*)\]/', $params, $matches)) {
+                        if (array_key_exists($matches[1], $this->data)) {
+                            $params = str_replace("[".$matches[1]."]", $this->getValue($matches[1]), $params);
+                            $rules[$ruleIdx] = $name.":".$params;
+                        }
+                    }
                     continue; // continue in foreach loop, nothing left to do here
                 }
 
@@ -104,5 +110,18 @@ abstract class BaseValidator extends LaravelValidator
         });
 
         return $rules;
+    }
+
+    /**
+     * Get the value of a given attribute.
+     *
+     * @param  string  $attribute
+     * @return mixed
+     */
+    protected function getValue($attribute)
+    {
+        if (! is_null($value = Arr::get($this->data, $attribute))) {
+            return $value;
+        }
     }
 }
