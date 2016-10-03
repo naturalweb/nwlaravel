@@ -438,7 +438,7 @@ class InputCriteria implements CriteriaInterface
 
         switch (true) {
             case $this->grammar instanceof \Illuminate\Database\Query\Grammars\MySqlGrammar:
-                $formatDb = sprintf("DATE_FORMAT(%s, '%%Y-%%m-%%d') %s ?", $key, $operator);
+                $formatDb = sprintf("DATE(%s) %s ?", $key, $operator);
                 break;
 
             case $this->grammar instanceof \Illuminate\Database\Query\Grammars\PostgresGrammar:

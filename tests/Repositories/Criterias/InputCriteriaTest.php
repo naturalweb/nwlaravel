@@ -73,13 +73,13 @@ class InputCriteriaTest extends TestCase
 
         $grammar = m::mock('Illuminate\Database\Query\Grammars\MySqlGrammar[]');
         $queryBuilder = m::mock('Illuminate\Database\Query\Builder');
-        $queryBuilder->shouldReceive('getGrammar')->once()->andReturn($grammar);
+        $queryBuilder->shouldReceive('getGrammar')->andReturn($grammar);
 
         $model = new StubModel;
 
         $query = m::mock('Illuminate\Database\Eloquent\Builder');
         $query->shouldReceive('getModel')->once()->andReturn($model);
-        $query->shouldReceive('getQuery')->once()->andReturn($queryBuilder);
+        $query->shouldReceive('getQuery')->andReturn($queryBuilder);
         $query->shouldReceive('example')->once()->ordered()->with('new-value')->andReturn($query);
         $query->shouldReceive('where')->once()->ordered()->with($closure)->andReturn($query);
         $query->shouldReceive('whereRaw')->once()->ordered()->with($expression)->andReturn($query);
@@ -87,8 +87,8 @@ class InputCriteriaTest extends TestCase
         $query->shouldReceive('whereIn')->once()->ordered()->with('stub_table.field1', ['value1', 'value2'])->andReturn($query);
         $query->shouldReceive('whereNotIn')->once()->ordered()->with('stub_table.field1', ['value1', 'value2'])->andReturn($query);
         $query->shouldReceive('where')->once()->ordered()->with('stub_table.field2', '=', 'foobar')->andReturn($query);
-        $query->shouldReceive('whereRaw')->once()->ordered()->with("DATE_FORMAT(`stub_table`.`field_date`, '%Y-%m-%d') = ?", ['2016-12-04'])->andReturn($query);
-        $query->shouldReceive('whereRaw')->once()->ordered()->with("DATE_FORMAT(`stub_table`.`field_date`, '%Y-%m-%d') > ?", ['2015-11-27'])->andReturn($query);
+        $query->shouldReceive('whereRaw')->once()->ordered()->with("DATE(`stub_table`.`field_date`) = ?", ['2016-12-04'])->andReturn($query);
+        $query->shouldReceive('whereRaw')->once()->ordered()->with("DATE(`stub_table`.`field_date`) > ?", ['2015-11-27'])->andReturn($query);
         $query->shouldReceive('whereNull')->once()->ordered()->with("stub_table.field_date")->andReturn($query);
         $query->shouldReceive('whereNotNull')->once()->ordered()->with("stub_table.field_date")->andReturn($query);
         $query->shouldReceive('whereNull')->once()->ordered()->with("table.field3")->andReturn($query);
@@ -96,8 +96,8 @@ class InputCriteriaTest extends TestCase
         $query->shouldReceive('where')->once()->ordered()->with('stub_table.field1', '<', 'valor3')->andReturn($query);
         $query->shouldReceive('where')->once()->ordered()->with('foo.field3', '>=', 10)->andReturn($query);
         $query->shouldReceive('where')->once()->ordered()->with('foo.field3', '<=', 50)->andReturn($query);
-        $query->shouldReceive('whereRaw')->once()->ordered()->with("DATE_FORMAT(`stub_table`.`field_date`, '%Y-%m-%d') >= ?", ['2000-12-01'])->andReturn($query);
-        $query->shouldReceive('whereRaw')->once()->ordered()->with("DATE_FORMAT(`stub_table`.`field_date`, '%Y-%m-%d') <= ?", ['2000-12-31'])->andReturn($query);
+        $query->shouldReceive('whereRaw')->once()->ordered()->with("DATE(`stub_table`.`field_date`) >= ?", ['2000-12-01'])->andReturn($query);
+        $query->shouldReceive('whereRaw')->once()->ordered()->with("DATE(`stub_table`.`field_date`) <= ?", ['2000-12-31'])->andReturn($query);
 
         $newQuery = m::mock('Illuminate\Database\Query\Builder');
         $newQuery->shouldReceive('orWhere')->once()->ordered()->with('stub_table.field1', 'like', "%{$search}%")->andReturn($query);
