@@ -499,6 +499,28 @@ if (! function_exists('formatNumber')) {
     }
 }
 
+if (! function_exists('maskCep')) {
+    /**
+     * Cria a mascara do cep
+     *
+     * @param string $value
+     *
+     * @return string
+     * @example : maskCep(12345678) = 12345-678
+     */
+    function maskCep($value)
+    {
+        $capture = '/^([0-9]{5})([0-9]{3})$/';
+        $format = '$1-$2';
+        $value = preg_replace('[^0-9]', '', $value);
+        $result = preg_replace($capture, $format, $value);
+        if (!is_null($result)) {
+            $value = $result;
+        }
+        return $value;
+    }
+}
+
 if (! function_exists('maskCpf')) {
     /**
      * Cria a mascara do cpf

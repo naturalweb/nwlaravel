@@ -212,6 +212,12 @@ class HelpersTest extends TestCase
         $this->assertEquals("2345609900", maskCpf("2345609900"));
     }
 
+    public function testMaskCep()
+    {
+        $this->assertEquals("12345-609", maskCep("12345609"));
+        $this->assertEquals("234560999", maskCep("234560999"));
+    }
+
     public function testMaskCnpj()
     {
         $this->assertEquals("33.123.456/0001-44", maskCnpj("33123456000144"));
