@@ -11,31 +11,6 @@ use \DateTime;
 abstract class AbstractTransformer extends TransformerAbstract
 {
     /**
-     * @var boolean
-     */
-    protected $includeData = false;
-
-    /**
-     * Construct
-     *
-     * @param boolean $includeData Boolean Include Data
-     */
-    public function __construct($includeData = false)
-    {
-        $this->includeData = $includeData;
-    }
-
-    /**
-     * Has Include Data
-     *
-     * @return boolean
-     */
-    public function hasIncludeData()
-    {
-        return $this->includeData;
-    }
-
-    /**
      * Format Date
      *
      * @param DateTime $date   Date Time
