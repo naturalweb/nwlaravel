@@ -99,8 +99,11 @@ abstract class BaseValidator extends LaravelValidator
                 }
 
                 // set 3rd parameter to id given to getValidationRules()
-                $p[2] = $id;
-                if ($this->keyName) {
+                if (!isset($p[2]) || empty($p[2])) {
+                    $p[2] = $id;
+                }
+
+                if ($this->keyName && (!isset($p[3]) || empty($p[3]))) {
                     $p[3] = $this->keyName;
                 }
 
@@ -120,7 +123,7 @@ abstract class BaseValidator extends LaravelValidator
      */
     protected function getValue($attribute)
     {
-        if (! is_null($value = Arr::get($this->data, $attribute))) {
+        if (! is_null($value = array_get($this->data, $attribute))) {
             return $value;
         }
     }
