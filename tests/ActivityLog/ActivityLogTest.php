@@ -16,6 +16,7 @@ class ActivityLogTest extends TestCase
         $this->assertAttributeEquals([
             'action',
             'user_id',
+            'user_type',
             'description',
             'details',
             'ip_address',

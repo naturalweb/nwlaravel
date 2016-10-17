@@ -25,18 +25,6 @@ class DefaultHandlerTest extends TestCase
 
     public function testLog()
     {
-        $data = [
-            'action' => 'created',
-            'user_id' => 2,
-            'user_name' => 'caused name',
-            'description' => 'foo-bar',
-            'ip_address' => '192.168.25.25',
-            'content_type' => 'stdClass',
-            'content_id' => 4,
-        ];
-        $model = m::mock('NwLaravel\ActivityLog\ActivityLog');
-        $model->shouldReceive('create')->once()->with($data)->andReturn(true);
-
         $config = m::mock('Illuminate\Config\Repository');
         $config->shouldReceive('get')
             ->once()
@@ -53,6 +41,19 @@ class DefaultHandlerTest extends TestCase
 
         $request = m::mock('Illuminate\Http\Request');
         $request->shouldReceive('ip')->once()->andReturn('192.168.25.25');
+
+        $data = [
+            'action' => 'created',
+            'user_id' => 2,
+            'user_type' => get_class($user),
+            'user_name' => 'caused name',
+            'description' => 'foo-bar',
+            'ip_address' => '192.168.25.25',
+            'content_type' => 'stdClass',
+            'content_id' => 4,
+        ];
+        $model = m::mock('NwLaravel\ActivityLog\ActivityLog');
+        $model->shouldReceive('create')->once()->with($data)->andReturn(true);
 
         $handler = new DefaultHandler($model);
         $this->assertTrue($handler->log('created', 'foo-bar', $content, $user, $request));

@@ -37,9 +37,11 @@ class DefaultHandler implements HandlerInterface
     public function log($action, $description, $content = null, Authenticatable $user = null, Request $request = null)
     {
         $user_id = null;
+        $user_type = null;
         $user_name = '';
         if ($user) {
             $user_id = $user->getAuthIdentifier();
+            $user_type = get_class($user);
             $field_username = config('nwlaravel.activity.field_username', 'username');
             $user_name = ($field_username && isset($user->{$field_username})) ? (string) $user->{$field_username} : '';
         }
@@ -51,6 +53,7 @@ class DefaultHandler implements HandlerInterface
         return (bool) $this->model->create([
             'action' => $action,
             'user_id' => $user_id,
+            'user_type' => $user_type,
             'user_name' => $user_name,
             'description' => $description,
             'ip_address' => $ip_address,

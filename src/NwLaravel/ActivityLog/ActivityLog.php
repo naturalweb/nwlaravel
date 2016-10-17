@@ -30,6 +30,7 @@ class ActivityLog extends AbstractEntity
     protected $fillable = [
         'action',
         'user_id',
+        'user_type',
         'description',
         'details',
         'ip_address',
@@ -43,6 +44,7 @@ class ActivityLog extends AbstractEntity
     protected $columns = [
         'action',
         'user_id',
+        'user_type',
         'description',
         'details',
         'ip_address',
