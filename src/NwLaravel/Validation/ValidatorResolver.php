@@ -13,6 +13,9 @@ use Illuminate\Validation\Validator;
  */
 class ValidatorResolver extends Validator
 {
+
+    protected $currentRule;
+    
     /**
      * Validate Pattern Valid
      *
