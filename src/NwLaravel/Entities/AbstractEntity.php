@@ -4,8 +4,9 @@ namespace NwLaravel\Entities;
 
 use Illuminate\Database\Eloquent\Model;
 use Prettus\Repository\Contracts\Presentable;
-use Prettus\Repository\Traits\PresentableTrait;
+use Prettus\Repository\Contracts\PresenterInterface;
 use NwLaravel\Repositories\Criterias\InputCriteria;
+use Illuminate\Support\Arr;
 
 /**
  * Class AbstractEntity
@@ -14,12 +15,71 @@ use NwLaravel\Repositories\Criterias\InputCriteria;
  */
 abstract class AbstractEntity extends Model implements Presentable
 {
-    use PresentableTrait;
-
     /**
      * @var array
      */
     protected $columns;
+
+    /**
+     * FEITO O PULL REQUEST # ATE SER SOLICITADO
+     * INICIO: Prettus\Repository\Traits\PresentableTrait
+     */
+    /**
+     * @var PresenterInterface
+     */
+    protected $presenter = null;
+
+    /**
+     * @param \Prettus\Repository\Contracts\PresenterInterface $presenter
+     *
+     * @return $this
+     */
+    public function setPresenter(PresenterInterface $presenter)
+    {
+        $this->presenter = $presenter;
+
+        return $this;
+    }
+
+    /**
+     * @param      $key
+     * @param null $default
+     *
+     * @return mixed|null
+     */
+    public function present($key, $default = null)
+    {
+        if ($this->hasPresenter()) {
+            $data = $this->presenter()['data'];
+
+            return Arr::get($data, $key, $default);
+        }
+
+        return $default;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasPresenter()
+    {
+        return isset($this->presenter) && $this->presenter instanceof PresenterInterface;
+    }
+
+    /**
+     * @return $this|mixed
+     */
+    public function presenter()
+    {
+        if ($this->hasPresenter()) {
+            return $this->presenter->present($this);
+        }
+
+        return $this;
+    }
+    /**
+     * FIM Prettus\Repository\Traits\PresentableTrait
+     */
 
     /**
      * Set a given attribute on the model.
