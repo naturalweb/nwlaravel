@@ -25,17 +25,17 @@ class BackgroundTest extends TestCase
 
     public function testStartAndStop()
     {
-        if (defined('TRAVIS')) {
-            $this->markTestSkipped('Enviroment travis-ci');
-        }
-
-        $cmd = 'ls '.__DIR__ . '; sleep 1;';
+        $cmd = 'ls '.__DIR__ . '; sleep 3;';
 
         $process = new Background();
-
         $this->assertTrue($process->start($cmd));
-        // $this->assertGreaterThan(1, $process->getPid());
-        $this->assertEquals($process->pid($cmd), $process->getPid());
+
+        $pid = $process->pid($cmd);
+        if (!$pid) {
+            $this->markTestSkipped('Enviroment not permission Background!');
+        }
+
+        $this->assertEquals($pid, $process->getPid());
 
         $this->assertTrue($process->stop($cmd));
         $this->assertNull($process->getPid());
