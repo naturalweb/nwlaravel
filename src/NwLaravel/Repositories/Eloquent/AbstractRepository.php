@@ -400,7 +400,7 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
     {
         $pattern = '/^(((where|orWhere).*)|limit|groupBy|join|leftJoin|rightJoin|crossJoin)$/';
         if (preg_match($pattern, $method)) {
-            call_user_func_array([$this->model, $method], $parameters);
+            $this->model = call_user_func_array([$this->model, $method], $parameters);
             return $this;
         }
 
