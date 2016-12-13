@@ -6,6 +6,7 @@ use Mockery as m;
 use Tests\TestCase;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\Expression;
 use NwLaravel\Repositories\Criterias\InputCriteria;
 use NwLaravel\Resultset\BuilderResultset;
 use Prettus\Validator\Contracts\ValidatorInterface;
@@ -78,7 +79,7 @@ class AbstractRepositoryTest extends TestCase
             ->shouldReceive('where')
             ->once()
             ->with('foobar', '>', 'baz', 'or')
-            ->andReturn($repo);
+            ->andReturn($this->model);
 
         $this->assertEquals($repo, $repo->where('foobar', '>', 'baz', 'or'));
     }
@@ -394,6 +395,43 @@ class AbstractRepositoryTest extends TestCase
         $repo = new StubAbstractRepository($this->app);
 
         $this->assertEquals($repo, $repo->orderBy('name foo'));
+    }
+
+    public function providerRandom()
+    {
+        return [
+            ['RAND()', 'MySqlGrammar'],
+            ['RAND()', 'SqlServerGrammar'],
+            ['RANDOM()', 'PostgresGrammar'],
+            ['RANDOM()', 'SQLiteGrammar'],
+        ];
+    }
+
+    /**
+     * @dataProvider providerRandom
+     */
+    public function testRandom($random, $classGrammar)
+    {
+        $model = $this->model;
+        $test = $this;
+
+        $grammar = m::mock("Illuminate\Database\Query\Grammars\\{$classGrammar}[]");
+        $conn = m::mock("Illuminate\Database\Connection");
+        $conn->shouldReceive('getQueryGrammar')->once()->andReturn($grammar);
+        
+        $model->shouldReceive('getConnection')->once()->andReturn($conn);
+
+        $model->shouldReceive('orderBy')
+            ->once()
+            ->andReturnUsing(function ($expression) use ($model, $test, $random) {
+                $test->assertInstanceOf(Expression::class, $expression);
+                $test->assertEquals($random, $expression->getValue());
+                return $this;
+            });
+
+        $repo = new StubAbstractRepository($this->app);
+
+        $this->assertEquals($repo, $repo->random());
     }
 
     public function testGetQueryWithNewQuery()

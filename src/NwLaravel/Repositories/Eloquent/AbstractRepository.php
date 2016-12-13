@@ -10,6 +10,8 @@ use NwLaravel\Resultset\BuilderResultset;
 use Prettus\Validator\Contracts\ValidatorInterface;
 use Prettus\Repository\Events\RepositoryEntityCreated;
 use Prettus\Repository\Events\RepositoryEntityUpdated;
+use Illuminate\Database\Query\Expression;
+use Illuminate\Database\Query\Grammars;
 use BadMethodCallException;
 use RuntimeException;
 
@@ -145,6 +147,31 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
                 $this->model = $this->model->orderBy($field, $direction);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * Random
+     *
+     * @return RepositoryInterface
+     */
+    public function random()
+    {
+        $grammar = $this->model->getConnection()->getQueryGrammar();
+
+        switch (true) {
+            case $grammar instanceof Grammars\MySqlGrammar:
+            case $grammar instanceof Grammars\SqlServerGrammar:
+                $random = 'RAND()';
+                break;
+            case $grammar instanceof Grammars\PostgresGrammar:
+            case $grammar instanceof Grammars\SQLiteGrammar:
+                $random = 'RANDOM()';
+                break;
+        }
+
+        $this->model = $this->model->orderBy(new Expression($random));
 
         return $this;
     }
