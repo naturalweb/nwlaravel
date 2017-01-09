@@ -1,6 +1,7 @@
 <?php
 namespace NwLaravel\Validation;
 
+use Illuminate\Validation\Factory;
 use Prettus\Validator\LaravelValidator;
 
 /**
@@ -13,6 +14,27 @@ abstract class BaseValidator extends LaravelValidator
      * @var string
      */
     protected $keyName;
+
+    /**
+     * Construct
+     *
+     * @param \Illuminate\Validation\Factory $validator
+     */
+    public function __construct(Factory $validator)
+    {
+        $this->validator = $validator;
+        $this->rules = array_merge_recursive($this->rules, (array) $this->makeRules());
+    }
+
+    /**
+     * MakeRules
+     *
+     * @return array
+     */
+    protected function makeRules()
+    {
+        return [];
+    }
 
     /**
      * Get Validator

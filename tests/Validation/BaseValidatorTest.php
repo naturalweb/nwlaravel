@@ -23,6 +23,7 @@ class BaseValidatorTest extends TestCase
         $expected = [
             'email' => ['required', 'email', 'unique:users,email,33,id_foo'],
             'foo_id' => ['exists:tablename,id,id,420'],
+            'name' => ['required'],
         ];
         $this->assertEquals($expected, $base->getRules('create'));
     }
@@ -38,4 +39,16 @@ class FooValidator extends BaseValidator
         'update' => ['name' => 'required|unique:foo'],
         'delete' => ['id' => 'not_exists:foo'],
     ];
+
+    /**
+     * MakeRules
+     *
+     * @return array
+     */
+    public function makeRules()
+    {
+        return [
+            'create' => ['name' => 'required'],
+        ];
+    }
 }

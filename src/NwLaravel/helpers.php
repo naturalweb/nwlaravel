@@ -262,7 +262,8 @@ if (! function_exists('dateFormatter')) {
                 config('app.locale'),
                 $dateType,
                 $timeType,
-                config('app.timezone')
+                config('app.timezone'),
+                \IntlDateFormatter::GREGORIAN
             );
 
             return $fmt->format($date);
