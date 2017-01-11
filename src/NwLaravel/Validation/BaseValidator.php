@@ -2,18 +2,35 @@
 namespace NwLaravel\Validation;
 
 use Illuminate\Validation\Factory;
-use Prettus\Validator\LaravelValidator;
+use Prettus\Validator\AbstractValidator;
 
 /**
  * Class BaseValidator
  * @abstract
  */
-abstract class BaseValidator extends LaravelValidator
+abstract class BaseValidator extends AbstractValidator
 {
+    /**
+     * Validator
+     *
+     * @var \Illuminate\Validation\Factory
+     */
+    protected $validator;
+
     /**
      * @var string
      */
     protected $keyName;
+
+    /**
+     * @var array
+     */
+    protected $messages = [];
+
+    /**
+     * @var array
+     */
+    protected $attributes = [];
 
     /**
      * Construct
@@ -23,7 +40,9 @@ abstract class BaseValidator extends LaravelValidator
     public function __construct(Factory $validator)
     {
         $this->validator = $validator;
-        $this->rules = array_merge_recursive($this->rules, (array) $this->makeRules());
+        $this->rules = array_merge_recursive((array) $this->rules, $this->makeRules());
+        $this->messages = array_merge_recursive((array) $this->messages, $this->makeMessages());
+        $this->attributes = array_merge_recursive((array) $this->attributes, $this->makeAttributes());
     }
 
     /**
@@ -34,6 +53,50 @@ abstract class BaseValidator extends LaravelValidator
     protected function makeRules()
     {
         return [];
+    }
+
+    /**
+     * Make Messages
+     *
+     * @return array
+     */
+    protected function makeMessages()
+    {
+        return [];
+    }
+
+    /**
+     * Make Attributes
+     *
+     * @return array
+     */
+    protected function makeAttributes()
+    {
+        return [];
+    }
+
+    /**
+     * Get Messages
+     *
+     * @param array $messages
+     *
+     * @return array
+     */
+    public function getMessages()
+    {
+        return $this->messages;
+    }
+
+    /**
+     * Get Attributes
+     *
+     * @param array $attributes
+     *
+     * @return array
+     */
+    public function getAttributes()
+    {
+        return $this->attributes;
     }
 
     /**
@@ -76,6 +139,27 @@ abstract class BaseValidator extends LaravelValidator
         }
 
         return $this->parserValidationRules($rules, $this->id);
+    }
+
+    /**
+     * Pass the data and the rules to the validator
+     *
+     * @param string $action
+     * @return bool
+     */
+    public function passes($action = null)
+    {
+        $rules      = $this->getRules($action);
+        $messages   = $this->getMessages();
+        $attributes = $this->getAttributes();
+        $validator  = $this->validator->make($this->data, $rules, $messages, $attributes);
+
+        if ($validator->fails()) {
+            $this->errors = $validator->messages();
+            return false;
+        }
+
+        return true;
     }
 
     /**
