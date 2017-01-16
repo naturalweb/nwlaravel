@@ -70,20 +70,12 @@ if (! function_exists('asDateTime')) {
         }
 
         if (is_string($value)) {
-            $format = config('nwlaravel.date_format');
-
-            $date = date_parse_from_format($format, $value);
-            if ($format &&
-                isset($date['error_count']) &&
-                $date['error_count'] == 0 &&
-                checkdate($date['month'], $date['day'], $date['year'])
-            ) {
-                return Carbon::createFromFormat($format, $value)->startOfDay();
-
-            } else {
-                $format = DB::getQueryGrammar()->getDateFormat();
+            $formatDB = DB::getQueryGrammar()->getDateFormat();
+            $dateFormat = config('nwlaravel.date_format');
+            $formats = array_merge([$formatDB, $dateFormat], explode(" ", $dateFormat));
+            foreach ($formats as $format) {
                 $date = date_parse_from_format($format, $value);
-                if (isset($date['error_count']) && $date['error_count'] == 0) {
+                if ($date['error_count'] == 0 && $date['warning_count'] == 0) {
                     return Carbon::createFromFormat($format, $value);
                 }
             }
@@ -107,7 +99,7 @@ if (! function_exists('fromDateTime')) {
      */
     function fromDateTime($value)
     {
-        $format = DB::getQueryGrammar()->getDateFormat();
+        $formatDB = DB::getQueryGrammar()->getDateFormat();
 
         if (is_numeric($value)) {
             $value = Carbon::createFromTimestamp($value);
@@ -117,17 +109,13 @@ if (! function_exists('fromDateTime')) {
 
         } elseif (is_string($value)) {
             $dateFormat = config('nwlaravel.date_format');
-            $date = date_parse_from_format($dateFormat, $value);
-
-            if (isset($date['error_count']) && $date['error_count'] == 0) {
-                if (checkdate($date['month'], $date['day'], $date['year'])) {
-                    $value = Carbon::createFromFormat($dateFormat, $value)->startOfDay();
-                }
-
-            } else {
+            $formats = array_merge([$dateFormat], explode(" ", $dateFormat));
+            $formats[] = $formatDB;
+            foreach ($formats as $format) {
                 $date = date_parse_from_format($format, $value);
-                if (isset($date['error_count']) && $date['error_count'] == 0) {
+                if ($date['error_count'] == 0 && $date['warning_count'] == 0) {
                     $value = Carbon::createFromFormat($format, $value);
+                    break;
                 }
             }
 
@@ -137,7 +125,7 @@ if (! function_exists('fromDateTime')) {
         }
 
         if ($value instanceof DateTime) {
-            return $value->format($format);
+            return $value->format($formatDB);
         }
 
         return null;

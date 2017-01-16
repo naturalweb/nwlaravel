@@ -5,7 +5,7 @@ return [
      * Use helpers "asDateTime" e "fromDateTime"
      * @see src/NwLaravel/helpers.php
      */
-    'date_format' => 'd/m/Y',
+    'date_format' => 'd/m/Y H:i',
 
     /**
      * Use to proxyUrl
