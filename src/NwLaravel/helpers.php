@@ -76,7 +76,11 @@ if (! function_exists('asDateTime')) {
             foreach ($formats as $format) {
                 $date = date_parse_from_format($format, $value);
                 if ($date['error_count'] == 0 && $date['warning_count'] == 0) {
-                    return Carbon::createFromFormat($format, $value);
+                    $value = Carbon::createFromFormat($format, $value);
+                    if ($date['hour'] === false) {
+                        $value->startOfDay();
+                    }
+                    return $value;
                 }
             }
 
@@ -115,6 +119,9 @@ if (! function_exists('fromDateTime')) {
                 $date = date_parse_from_format($format, $value);
                 if ($date['error_count'] == 0 && $date['warning_count'] == 0) {
                     $value = Carbon::createFromFormat($format, $value);
+                    if ($date['hour'] === false) {
+                        $value->startOfDay();
+                    }
                     break;
                 }
             }
