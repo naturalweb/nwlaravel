@@ -104,13 +104,10 @@ class ValidatorResolver extends Validator
                 $reflection = new ReflectionClass($className);
                 if (!$reflection->isAbstract() && $reflection->isSubclassOf('Respect\\Validation\\Validatable')) {
                     $arguments = (array) (isset($parameters[2]) ? $parameters[2] : []);
-                    $valided = app($className, $arguments)->validate($parameters[1]);
+                    $instance = $reflection->newInstanceArgs($arguments);
+                    return $instance->validate($parameters[1]);
                 }
             }
-        }
-
-        if (isset($valided)) {
-            return $valided;
         }
 
         return parent::__call($method, $parameters);

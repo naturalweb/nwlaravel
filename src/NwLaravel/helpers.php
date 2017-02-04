@@ -11,6 +11,16 @@ use \Carbon\Carbon;
 use \Illuminate\Database\Eloquent\Model;
 use \Illuminate\Support\Facades\DB;
 
+if (! function_exists('arrayFilterClean')) {
+
+    function arrayFilterClean(array $input)
+    {
+        return array_filter($input, function ($value) {
+            return (!empty($value) || $value == "0");
+        });
+    }
+}
+
 if (! function_exists('asCurrency')) {
     /**
      * Return a timestamp as DateTime object.
@@ -416,6 +426,19 @@ if (! function_exists('formatDateTimeShort')) {
     function formatDateTimeShort($date)
     {
         return dateFormatter($date, \IntlDateFormatter::MEDIUM, \IntlDateFormatter::SHORT);
+    }
+}
+
+if (! function_exists('currencySymbol')) {
+    /**
+     * Return Currency Symbol
+     *
+     * @return string
+     */
+    function currencySymbol()
+    {
+        $fmt = new \NumberFormatter(config('app.locale'), \NumberFormatter::CURRENCY);
+        return $fmt->getSymbol(\NumberFormatter::CURRENCY_SYMBOL);
     }
 }
 

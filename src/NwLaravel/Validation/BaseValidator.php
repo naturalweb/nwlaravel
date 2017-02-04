@@ -3,6 +3,8 @@ namespace NwLaravel\Validation;
 
 use Illuminate\Validation\Factory;
 use Prettus\Validator\AbstractValidator;
+use Illuminate\Validation\Rules\Unique;
+use Illuminate\Validation\Rule;
 
 /**
  * Class BaseValidator
@@ -172,7 +174,6 @@ abstract class BaseValidator extends AbstractValidator
      */
     protected function parserValidationRules($rules, $id = null)
     {
-
         if ($id === null) {
             return $rules;
         }
@@ -183,54 +184,86 @@ abstract class BaseValidator extends AbstractValidator
             }
 
             foreach ($rules as $ruleIdx => $rule) {
-                // get name and parameters
-                list($name, $params) = array_pad(explode(":", $rule), 2, null);
+                $rule = $this->replaceValuesRules($rule);
 
-                // only do someting for the unique rule
-                if (strtolower($name) != "unique") {
-                    if (preg_match('/\[(.*)\]/', $params, $matches)) {
-                        if (array_key_exists($matches[1], $this->data)) {
-                            $params = str_replace("[".$matches[1]."]", $this->getValue($matches[1]), $params);
-                            $rules[$ruleIdx] = $name.":".$params;
-                        }
+                $itens = array_pad(explode(":", $rule), 2, null);
+                $nameRule = isset($itens[0]) ? $itens[0] : null;
+                $params = implode(":", array_splice($itens, 1));
+
+                if ($nameRule != "unique") {
+                    $rule = $nameRule;
+                    if (!empty($params)) {
+                        $rule .= ":".$params;
                     }
-                    continue; // continue in foreach loop, nothing left to do here
+                    $rules[$ruleIdx] = $rule;
+                    continue;
                 }
 
+                // ATUALIZA RULES UNIQUE
                 $p = array_map("trim", explode(",", $params));
+                
+                $table = $p[0];
 
                 // set field name to rules key ($field) (laravel convention)
-                if (!isset($p[1])) {
-                    $p[1] = $field;
+                if (isset($p[1]) && !empty($p[1])) {
+                    $field = $p[1];
                 }
 
                 // set 3rd parameter to id given to getValidationRules()
-                if (!isset($p[2]) || empty($p[2])) {
-                    $p[2] = $id;
+                if (isset($p[2]) && !empty($p[2]) && strtoupper($p[2]) != 'NULL') {
+                    $id = intval($p[2]);
                 }
 
-                if ($this->keyName && (!isset($p[3]) || empty($p[3]))) {
-                    $p[3] = $this->keyName;
+                if (isset($p[3]) && !empty($p[3])) {
+                    $keyName = $p[3];
+                } elseif($this->keyName) {
+                    $keyName = $this->keyName;
+                } else {
+                    $keyName = 'id';
                 }
 
-                $params = implode(",", $p);
-                $rules[$ruleIdx] = $name.":".$params;
+                if (! $rule instanceof Unique) {
+                    $rule = Rule::unique($table, $field);
+                }
+
+                if ($rule instanceof Unique) {
+                    $rule->where(function ($query) use ($id, $keyName) {
+                        $query->orWhere($keyName, '<>', $id);
+                        $query->orWhereNull($keyName);
+                    });
+                }
+
+                $rules[$ruleIdx] = $rule;
             }
         });
 
         return $rules;
     }
 
+    protected function replaceValuesRules($rule)
+    {
+        while (preg_match('/\[([A-Za-z0-9_]+)\]/', $rule, $match)) {
+            if (array_key_exists($match[1], $this->data)) {
+                $rule = str_replace("[{$match[1]}]", $this->getValue($match[1]), $rule);
+            }
+        }
+
+        return $rule;
+    }
+
     /**
      * Get the value of a given attribute.
      *
-     * @param  string  $attribute
+     * @param string $attribute
+     *
      * @return mixed
      */
     protected function getValue($attribute)
     {
-        if (! is_null($value = array_get($this->data, $attribute))) {
-            return $value;
+        if (is_null($value = array_get($this->data, $attribute))) {
+            $value = 'NULL';
         }
+
+        return $value;
     }
 }

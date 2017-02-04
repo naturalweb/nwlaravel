@@ -26,6 +26,19 @@ class HelpersTest extends TestCase
         $this->app->instance('config', $this->config);
     }
 
+    public function testArrayFilterClean()
+    {
+        $array = [
+            0 => null,
+            1 => '',
+            'foo' => 'bar',
+            2 => '0',
+            'zero' => 0,
+            false
+        ];
+        $this->assertEquals(['foo' => 'bar', 2 => '0', 'zero' => 0, 3 => false], arrayFilterClean($array));
+    }
+
     public function testAsCurrency()
     {
         $this->assertNull(asCurrency(''));
@@ -185,6 +198,13 @@ class HelpersTest extends TestCase
         $dateFormatter = dateFormatter($date, \IntlDateFormatter::FULL, \IntlDateFormatter::NONE);
         $this->assertEquals('Tuesday, September 29, 2015', $dateFormatter);
         $this->assertEquals('ERROR', dateFormatter('ERROR', \IntlDateFormatter::FULL, \IntlDateFormatter::NONE));
+    }
+
+    public function testCurrencySymbol()
+    {
+        $this->config->shouldReceive('get')->with('app.locale', null)->andReturn('en-us');
+
+        $this->assertEquals('$', currencySymbol());
     }
 
     public function testDatesNow()

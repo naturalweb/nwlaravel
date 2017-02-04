@@ -33,7 +33,21 @@ class BaseValidatorTest extends TestCase
             'email' => ['required', 'email', 'unique:users,email,33,id_foo'],
             'foo_id' => ['exists:tablename,id,id,420'],
         ];
-        $this->assertEquals($expected, $base->getRules('create'));
+        $actual = $base->getRules('create');
+        $this->assertEquals(['exists:tablename,id,id,420'], $actual['foo_id']);
+        $this->assertEquals('required', $actual['email'][0]);
+        $this->assertEquals('email', $actual['email'][1]);
+    
+        $unique = $actual['email'][2];
+        $this->assertInstanceOf('Illuminate\validation\Rules\Unique', $unique);
+        $this->assertAttributeEquals('users', 'table', $unique);
+        $this->assertAttributeEquals('email', 'column', $unique);
+
+        $query = m::mock('Illuminate\Database\Query\Builder');
+        $query->shouldReceive('orWhere')->once()->with('id_foo', '<>', 33);
+        $query->shouldReceive('orWhereNull')->once()->with('id_foo');
+        $callback = $unique->queryCallbacks()[0];
+        $callback($query);
     }
 
     public function testPassesShouldReceiveTrue()
