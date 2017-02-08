@@ -214,4 +214,34 @@ class ValidatorResolverTest extends TestCase
             ['33,31,43.00'],
         ];
     }
+
+    public function testValidateRequiredIfAll()
+    {
+        $data = ['pessoa' => 'J', 'tipo' => '1'];
+        $this->resolver->setData($data);
+
+        $this->assertTrue($this->resolver->validateRequiredIfAll('foo', 'bar', ['pessoa', 'J', 'tipo', '1']));
+        $this->assertFalse($this->resolver->validateRequiredIfAll('foo', null, ['pessoa', 'J', 'tipo', '1']));
+
+        $this->assertTrue($this->resolver->validateRequiredIfAll('foo', null, ['pessoa', 'J', 'tipo', '0']));
+        $this->assertTrue($this->resolver->validateRequiredIfAll('foo', null, ['pessoa', 'F', 'tipo', '1']));
+        $this->assertTrue($this->resolver->validateRequiredIfAll('foo', null, ['pessoa', 'F', 'tipo', '0']));
+        $this->assertTrue($this->resolver->validateRequiredIfAll('foo', null, ['pessoa', 'F']));
+        $this->assertTrue($this->resolver->validateRequiredIfAll('foo', null, ['tipo', '0']));
+    }
+
+    public function testValidateRequiredIfUnlessAll()
+    {
+        $data = ['pessoa' => 'J', 'tipo' => '1'];
+        $this->resolver->setData($data);
+
+        $this->assertTrue($this->resolver->validateRequiredUnlessAll('foo', 'bar', ['pessoa', 'F', 'tipo', '0']));
+        $this->assertFalse($this->resolver->validateRequiredUnlessAll('foo', null, ['pessoa', 'F', 'tipo', '0']));
+
+        $this->assertTrue($this->resolver->validateRequiredUnlessAll('foo', null, ['pessoa', 'F', 'tipo', '1']));
+        $this->assertTrue($this->resolver->validateRequiredUnlessAll('foo', null, ['pessoa', 'J', 'tipo', '0']));
+        $this->assertTrue($this->resolver->validateRequiredUnlessAll('foo', null, ['pessoa', 'J', 'tipo', '1']));
+        $this->assertTrue($this->resolver->validateRequiredUnlessAll('foo', null, ['pessoa', 'J']));
+        $this->assertTrue($this->resolver->validateRequiredUnlessAll('foo', null, ['tipo', '1']));
+    }
 }

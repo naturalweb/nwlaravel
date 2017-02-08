@@ -93,6 +93,70 @@ class ValidatorResolver extends Validator
     }
 
     /**
+     * Validate that an attribute exists when another attribute has a given value.
+     *
+     * @param  string  $attribute
+     * @param  mixed   $value
+     * @param  mixed   $parameters
+     * @return bool
+     */
+    public function validateRequiredIfAll($attribute, $value, $parameters)
+    {
+        $this->requireParameterCount(2, $parameters, 'required_if_all');
+
+        $valid = true;
+        $count = count($parameters);
+
+        for ($i = 0; $i < $count; $i += 2) {
+            $field = $parameters[$i];
+            $fieldValue = $parameters[$i + 1];
+            
+            if ($fieldValue != $this->getValue($field)) {
+                $valid = false;
+                break;
+            }
+        }
+
+        if ($valid) {
+            return $this->validateRequired($attribute, $value);
+        }
+
+        return true;
+    }
+
+    /**
+     * Validate that an attribute exists when another attribute does not have a given value.
+     *
+     * @param  string  $attribute
+     * @param  mixed  $value
+     * @param  mixed  $parameters
+     * @return bool
+     */
+    public function validateRequiredUnlessAll($attribute, $value, $parameters)
+    {
+        $this->requireParameterCount(2, $parameters, 'required_unless_all');
+
+        $valid = true;
+        $count = count($parameters);
+
+        for ($i = 0; $i < $count; $i += 2) {
+            $field = $parameters[$i];
+            $fieldValue = $parameters[$i + 1];
+            
+            if ($fieldValue == $this->getValue($field)) {
+                $valid = false;
+                break;
+            }
+        }
+
+        if ($valid) {
+            return $this->validateRequired($attribute, $value);
+        }
+
+        return true;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function __call($method, $parameters)
