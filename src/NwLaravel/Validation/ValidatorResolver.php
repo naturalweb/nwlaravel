@@ -4,6 +4,7 @@ namespace NwLaravel\Validation;
 
 use ReflectionClass;
 use Illuminate\Validation\Validator;
+use Illuminate\Support\Arr;
 
 /**
  * Class ValidatorResolver
@@ -16,6 +17,16 @@ class ValidatorResolver extends Validator
 
     protected $currentRule;
     
+    /**
+     * The validation rules that imply the field is required.
+     *
+     * @var array
+     */
+    protected $implicitRules = [
+        'Required', 'Filled', 'RequiredWith', 'RequiredWithAll', 'RequiredWithout', 'RequiredWithoutAll',
+        'RequiredIf', 'RequiredUnless', 'Accepted', 'Present', 'RequiredIfAll', 'RequiredUnlessAll',
+    ];
+
     /**
      * Validate Pattern Valid
      *
@@ -92,6 +103,66 @@ class ValidatorResolver extends Validator
         return !$this->validateExists($attribute, $value, $parameters);
     }
 
+   /**
+     * Validate that an attribute exists when another attribute has a given value.
+     *
+     * @param  string  $attribute
+     * @param  mixed   $value
+     * @param  mixed   $parameters
+     * @return bool
+     */
+    public function validateRequiredIf($attribute, $value, $parameters)
+    {
+        $this->requireParameterCount(2, $parameters, 'required_if');
+
+        $data = Arr::get($this->data, $parameters[0]);
+
+        $values = array_slice($parameters, 1);
+
+        if (is_bool($data)) {
+            array_walk($values, function (&$value) {
+                if ($value === 'true') {
+                    $value = true;
+                } elseif ($value === 'false') {
+                    $value = false;
+                }
+            });
+        }
+
+        if (in_array($data, $values)) {
+            return $this->validateRequired($attribute, $value);
+        }
+
+        $this->mergeRules($attribute, 'nullable');
+
+        return true;
+    }
+
+    /**
+     * Validate that an attribute exists when another attribute does not have a given value.
+     *
+     * @param  string  $attribute
+     * @param  mixed  $value
+     * @param  mixed  $parameters
+     * @return bool
+     */
+    public function validateRequiredUnless($attribute, $value, $parameters)
+    {
+        $this->requireParameterCount(2, $parameters, 'required_unless');
+
+        $data = Arr::get($this->data, $parameters[0]);
+
+        $values = array_slice($parameters, 1);
+
+        if (! in_array($data, $values)) {
+            return $this->validateRequired($attribute, $value);
+        }
+
+        $this->mergeRules($attribute, 'nullable');
+
+        return true;
+    }
+
     /**
      * Validate that an attribute exists when another attribute has a given value.
      *
@@ -120,6 +191,8 @@ class ValidatorResolver extends Validator
         if ($valid) {
             return $this->validateRequired($attribute, $value);
         }
+
+        $this->mergeRules($attribute, 'nullable');
 
         return true;
     }
@@ -152,6 +225,8 @@ class ValidatorResolver extends Validator
         if ($valid) {
             return $this->validateRequired($attribute, $value);
         }
+
+        $this->mergeRules($attribute, 'nullable');
 
         return true;
     }

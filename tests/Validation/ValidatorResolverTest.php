@@ -244,4 +244,37 @@ class ValidatorResolverTest extends TestCase
         $this->assertTrue($this->resolver->validateRequiredUnlessAll('foo', null, ['pessoa', 'J']));
         $this->assertTrue($this->resolver->validateRequiredUnlessAll('foo', null, ['tipo', '1']));
     }
+
+    /**
+     * @dataProvider providerCondicoesRequired
+     */
+    public function testRequiredIfAllCondicoes($condicao)
+    {
+        $data = ['pessoa' => 'J', 'tipo' => '1'];
+        $this->resolver->setData($data);
+        $this->assertTrue($this->resolver->validateRequiredIfAll('foo', null, ['pessoa', 'J', 'tipo', '0']));
+        $this->assertAttributeEquals(['foo' => ['nullable']], 'rules', $this->resolver);
+    }
+
+    /**
+     * @dataProvider providerCondicoesRequired
+     */
+    public function testRequiredUnlessAllCondicoes($condicao)
+    {
+        $data = ['pessoa' => 'J', 'tipo' => '1'];
+        $this->resolver->setData($data);
+        $this->assertTrue($this->resolver->validateRequiredUnlessAll('foo', null, ['pessoa', 'J', 'tipo', '0']));
+        $this->assertAttributeEquals(['foo' => ['nullable']], 'rules', $this->resolver);
+    }
+
+    public function providerCondicoesRequired()
+    {
+        return [
+            [['pessoa', 'F', 'tipo', '1']],
+            [['pessoa', 'J', 'tipo', '0']],
+            [['pessoa', 'J', 'tipo', '1']],
+            [['pessoa', 'J']],
+            [['tipo', '1']],
+        ];
+    }
 }
