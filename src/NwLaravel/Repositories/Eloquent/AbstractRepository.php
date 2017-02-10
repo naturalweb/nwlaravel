@@ -349,13 +349,15 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
     }
     
     /**
-     * Save a new model in repository
+     * Validar
      *
-     * @throws ValidatorException
-     * @param array $attributes Array Attributes
-     * @return mixed
+     * @param array  $attributes
+     * @param string $action
+     * @param string $id
+     *
+     * @return bool
      */
-    public function create(array $attributes)
+    public function validar(array $attributes, $action, $id = null)
     {
         if (!is_null($this->validator)) {
             // we should pass data that has been casts by the model
@@ -364,8 +366,28 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
             $model = $this->model->newInstance()->forceFill($attributes);
             $attributes = array_merge($attributes, $model->toArray());
 
-            $this->validator->with($attributes)->passesOrFail(ValidatorInterface::RULE_CREATE);
+            $validator = $this->validator->with($attributes);
+
+            if ($id) {
+                $validator->setId($id);
+            }
+
+            return $validator->passesOrFail($action);
         }
+
+        return false;
+    }
+
+    /**
+     * Save a new model in repository
+     *
+     * @throws ValidatorException
+     * @param array $attributes Array Attributes
+     * @return mixed
+     */
+    public function create(array $attributes)
+    {
+        $this->validar($attributes, ValidatorInterface::RULE_CREATE);
 
         $model = $this->model->newInstance($attributes);
         $model->save();
@@ -388,15 +410,7 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
     {
         $this->applyScope();
 
-        if (!is_null($this->validator)) {
-            // we should pass data that has been casts by the model
-            // to make sure data type are same because validator may need to use
-            // this data to compare with data that fetch from database.
-            $model = $this->model->newInstance()->forceFill($attributes);
-            $attributes = array_merge($attributes, $model->toArray());
-
-            $this->validator->with($attributes)->setId($id)->passesOrFail(ValidatorInterface::RULE_UPDATE);
-        }
+        $this->validar($attributes, ValidatorInterface::RULE_UPDATE, $id);
 
         $temporarySkipPresenter = $this->skipPresenter;
 

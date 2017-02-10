@@ -489,11 +489,8 @@ class AbstractRepositoryTest extends TestCase
         $modelValid = m::mock(Model::class);
         $modelValid->shouldReceive('forceFill')->once()->with($input)->andReturn($modelValid);
         $modelValid->shouldReceive('toArray')->once()->andReturn($toArray);
-        $this->model->shouldReceive('newInstance')->once()->ordered()->andReturn($modelValid);
-
-        $new_model = m::mock(Model::class);
-        $new_model->shouldReceive('save')->once();
-        $this->model->shouldReceive('newInstance')->once()->ordered()->with($attributes)->andReturn($new_model);
+        $modelValid->shouldReceive('save')->once();
+        $this->model->shouldReceive('newInstance')->twice()->ordered()->andReturn($modelValid);
 
         $events = m::mock('events');
         $events->shouldReceive('fire')->once();
@@ -502,7 +499,7 @@ class AbstractRepositoryTest extends TestCase
         $repo = new StubAbstractRepository($this->app);
         $repo->makeValidator($validator);
 
-        $this->assertEquals($new_model, $repo->create($input));
+        $this->assertEquals($modelValid, $repo->create($input));
     }
 
     public function testUpdate()
@@ -523,7 +520,7 @@ class AbstractRepositoryTest extends TestCase
         $this->model->shouldReceive('newInstance')->once()->ordered()->andReturn($modelValid);
 
         $new_model = m::mock(Model::class);
-        $new_model->shouldReceive('fill')->once()->with($attributes)->andReturn($new_model);
+        $new_model->shouldReceive('fill')->once()->andReturn($new_model);
         $new_model->shouldReceive('save')->once();
         $this->model->shouldReceive('findOrFail')->once()->ordered()->with($id)->andReturn($new_model);
 
