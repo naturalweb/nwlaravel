@@ -20,6 +20,6 @@ class CleanLogCommandTest extends TestCase
 
         $this->assertInstanceOf('Illuminate\Console\Command', $command);
 
-        $command->handle();
+        $command->fire();
     }
 }

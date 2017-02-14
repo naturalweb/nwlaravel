@@ -11,12 +11,19 @@ class CleanLogCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'activitylog:clean';
+    protected $name = 'activitylog:clean';
 
     /**
      * @var ActivityManager
      */
     protected $activity;
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Clean up old records from the activity log.';
 
     /**
      * Construct
@@ -30,18 +37,11 @@ class CleanLogCommand extends Command
     }
 
     /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Clean up old records from the activity log.';
-
-    /**
      * Handle Command
      *
      * @return void
      */
-    public function handle()
+    public function fire()
     {
         $this->comment('Cleaning activity log...');
 
