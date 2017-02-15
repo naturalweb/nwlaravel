@@ -162,6 +162,39 @@ class StorageManager
     }
 
     /**
+     * Delete Folder
+     *
+     * @param string $folder Path Folder
+     *
+     * @return bool
+     */
+    public function deleteFolder($path)
+    {
+        if ($this->isFile($path)) {
+            return false;
+        }
+
+        return $this->storage->deleteDirectory($path);
+    }
+
+    /**
+     * Files in Folder
+     *
+     * @param string $folder
+     * @param bool   $recursive
+     *
+     * @return array
+     */
+    public function files($path, $recursive = false)
+    {
+        if ($this->isFile($path)) {
+            return null;
+        }
+
+        return $this->storage->files($path, (bool) $recursive);
+    }
+
+    /**
      * UploadFile
      *
      * @param UploadedFile $file     Uploaded File

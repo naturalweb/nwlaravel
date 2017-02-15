@@ -25,7 +25,7 @@ return [
     |
     */
     'activity' => [
-        'deleteOlderThanMonths' => 3,
+        'deleteOlderThanMonths' => env('DELETE_ACTIVITY_LOG_OLDER', 6),
         'auth_guard' => null,
         'field_username' => 'username',
         'handler' => \NwLaravel\ActivityLog\Handlers\DefaultHandler::class,

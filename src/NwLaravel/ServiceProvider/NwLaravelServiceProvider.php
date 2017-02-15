@@ -46,6 +46,7 @@ class NwLaravelServiceProvider extends ServiceProvider
     public function register()
     {
         $this->registerActivityLog();
+        $this->app->register(EventCleanCacheRepository::class);
     }
 
     /**

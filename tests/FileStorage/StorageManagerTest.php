@@ -159,6 +159,51 @@ class StorageManagerTest extends TestCase
         $this->assertFalse($fileStorage->deleteFile('path/folder'));
     }
 
+    public function testShouldDeleteFolderSuccess()
+    {
+        $mockStorage = m::mock(Storage::class);
+        $mockStorage->shouldReceive('exists')->once()->with('path/folder')->andReturn(true);
+        $mockStorage->shouldReceive('mimeType')->once()->with('path/folder')->andReturn('directory');
+        $mockStorage->shouldReceive('deleteDirectory')->once()->with('path/folder')->andReturn(true);
+
+        $fileStorage = new StorageManager($mockStorage);
+        $this->assertTrue($fileStorage->deleteFolder('path/folder'));
+    }
+
+    public function testShouldReturnFalseDeleteFolderWithFile()
+    {
+        $mockStorage = m::mock(Storage::class);
+        $mockStorage->shouldReceive('exists')->once()->with('path/folder')->andReturn(true);
+        $mockStorage->shouldReceive('mimeType')->once()->with('path/folder')->andReturn('image/jpg');
+        $mockStorage->shouldReceive('deleteDirectory')->never();
+
+        $fileStorage = new StorageManager($mockStorage);
+        $this->assertFalse($fileStorage->deleteFolder('path/folder'));
+    }
+
+    public function testShouldFilesSuccess()
+    {
+        $files = ['file1', 'file2', 'file3'];
+        $mockStorage = m::mock(Storage::class);
+        $mockStorage->shouldReceive('exists')->once()->with('path/folder')->andReturn(true);
+        $mockStorage->shouldReceive('mimeType')->once()->with('path/folder')->andReturn('directory');
+        $mockStorage->shouldReceive('files')->once()->with('path/folder', true)->andReturn($files);
+
+        $fileStorage = new StorageManager($mockStorage);
+        $this->assertEquals($files, $fileStorage->files('path/folder', true));
+    }
+
+    public function testShouldReturnNullFilesWithFile()
+    {
+        $mockStorage = m::mock(Storage::class);
+        $mockStorage->shouldReceive('exists')->once()->with('path/folder')->andReturn(true);
+        $mockStorage->shouldReceive('mimeType')->once()->with('path/folder')->andReturn('image/jpg');
+        $mockStorage->shouldReceive('files')->never();
+
+        $fileStorage = new StorageManager($mockStorage);
+        $this->assertNull($fileStorage->files('path/folder', true));
+    }
+
     public function testUploadFile()
     {
         $pathfile = __DIR__.'/_files/file.txt';
