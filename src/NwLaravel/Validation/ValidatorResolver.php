@@ -232,6 +232,34 @@ class ValidatorResolver extends Validator
     }
 
     /**
+     * Replace all place-holders for the after rule.
+     *
+     * @param  string  $message
+     * @param  string  $attribute
+     * @param  string  $rule
+     * @param  array   $parameters
+     * @return string
+     */
+    public function replaceBeforeOrEqual($message, $attribute, $rule, $parameters)
+    {
+        return $this->replaceBefore($message, $attribute, $rule, $parameters);
+    }
+
+    /**
+     * Replace all place-holders for the after rule.
+     *
+     * @param  string  $message
+     * @param  string  $attribute
+     * @param  string  $rule
+     * @param  array   $parameters
+     * @return string
+     */
+    public function replaceAfterOrEqual($message, $attribute, $rule, $parameters)
+    {
+        return $this->replaceAfter($message, $attribute, $rule, $parameters);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function __call($method, $parameters)
