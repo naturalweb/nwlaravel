@@ -8,10 +8,50 @@ use NwLaravel\Repositories\Eloquent\CacheableRepository;
 
 class CacheableRepositoryTest extends TestCase
 {
-    public function setUp()
+    public function testSetCacheRepository()
     {
-        parent::setUp();
+        $cache = m::mock('Illuminate\Cache\Repository');
 
+        $repo = new StubCacheable;
+
+        $this->assertEquals($repo, $repo->setCacheRepository($cache));
+
+        $this->assertAttributeEquals($cache, 'cacheRepository', $repo);
+    }
+
+    public function testSkipCache()
+    {
+        $cache = m::mock('Illuminate\Cache\Repository');
+
+        $repo = new StubCacheable;
+
+        $this->assertAttributeEquals(false, 'cacheSkip', $repo);
+
+        $this->assertEquals($repo, $repo->skipCache());
+
+        $this->assertAttributeEquals(true, 'cacheSkip', $repo);
+    }
+
+    public function testIsSkippedCache()
+    {
+        $cache = m::mock('Illuminate\Cache\Repository');
+
+        $request = m::mock('Illuminate\Http\Request');
+        $request->shouldReceive('has')->once()->with('skipCache')->andReturn(true);
+        $request->shouldReceive('get')->once()->with('skipCache')->andReturn(true);
+        $this->app->instance('Illuminate\Http\Request', $request);
+
+        $config = m::mock('Illuminate\Config\Repository');
+        $config->shouldReceive('get')->with('repository.cache.params.skipCache', 'skipCache')->andReturn('skipCache');
+        $this->app->instance('config', $config);
+
+        
+        $repo = new StubCacheable;
+        $this->assertTrue($repo->isSkippedCache());
+    }
+
+    public function testCallCache()
+    {
         $config = m::mock('Illuminate\Config\Repository');
         $config->shouldReceive('get')->with('repository.cache.repository', 'cache')->andReturn('cache');
         $config->shouldReceive('get')->with('repository.cache.enabled', true)->andReturn(true);
@@ -20,10 +60,7 @@ class CacheableRepositoryTest extends TestCase
         $config->shouldReceive('get')->with('repository.cache.allowed.except', null)->andReturn(null);
         $config->shouldReceive('get')->with('repository.cache.minutes', 30)->andReturn(30);
         $this->app->instance('config', $config);
-    }
 
-    public function testCallCache()
-    {
         $return = 'content-cache';
 
         $cache = m::mock('Illuminate\Cache\Repository');

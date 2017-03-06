@@ -277,4 +277,20 @@ class ValidatorResolverTest extends TestCase
             [['tipo', '1']],
         ];
     }
+
+    public function testReplaceBeforeOrEqual()
+    {
+        $resolver = m::mock(ValidatorResolver::class.'[]', [$this->translator, [], []]);
+        
+        $message = $resolver->replaceBeforeOrEqual('Msg :date', 'bar', 'replace_before_or_equal', ['2010-01-31']);
+        $this->assertEquals('Msg 2010-01-31', $message);
+    }
+
+    public function testReplaceAfterOrEqual()
+    {
+        $resolver = m::mock(ValidatorResolver::class.'[]', [$this->translator, [], []]);
+        
+        $message = $resolver->replaceAfterOrEqual('Msg :date', 'bar', 'replace_after_or_equal', ['2010-01-31']);
+        $this->assertEquals('Msg 2010-01-31', $message);
+    }
 }

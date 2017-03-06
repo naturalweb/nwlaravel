@@ -6,6 +6,7 @@ use Mockery as m;
 use NwLaravel\Entities\AbstractEntity;
 use Prettus\Repository\Contracts\Presentable;
 use Prettus\Repository\Traits\PresentableTrait;
+use Prettus\Repository\Contracts\PresenterInterface;
 use Illuminate\Support\Facades\DB;
 
 class AbstractEntityTest extends TestCase
@@ -15,6 +16,37 @@ class AbstractEntityTest extends TestCase
         $atual = m::mock(AbstractEntity::class.'[]');
 
         $this->assertInstanceOf(Presentable::class, $atual);
+    }
+
+    public function testHasAndSetPresenter()
+    {
+        $entity = m::mock(AbstractEntity::class.'[]');
+        $this->assertFalse($entity->hasPresenter());
+
+        $presenter = m::mock(PresenterInterface::class);
+        $this->assertEquals($entity, $entity->setPresenter($presenter));
+
+        $this->assertTrue($entity->hasPresenter());
+    }
+
+    public function testNoPresenter()
+    {
+        $entity = m::mock(AbstractEntity::class.'[]');
+
+        $this->assertEquals($entity, $entity->presenter());
+    }
+
+    public function testPresenter()
+    {
+        $data = ['foo', 'bar'];
+
+        $presenter = m::mock(PresenterInterface::class);
+        $presenter->shouldReceive('present')->once()->andReturn($data);
+
+        $entity = m::mock(AbstractEntity::class.'[]');
+        $entity->setPresenter($presenter);
+
+        $this->assertEquals($data, $entity->presenter());
     }
 
     public function testMethodSetAttribute()

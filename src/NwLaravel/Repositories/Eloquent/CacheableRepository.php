@@ -17,6 +17,11 @@ trait CacheableRepository
     protected $cacheRepository = null;
 
     /**
+     * @var boolean
+     */
+    protected $cacheSkip = false;
+
+    /**
      * Set Cache Repository
      *
      * @param CacheRepository $repository
