@@ -10,6 +10,7 @@ use NwLaravel\Resultset\BuilderResultset;
 use Prettus\Validator\Contracts\ValidatorInterface;
 use Prettus\Repository\Events\RepositoryEntityCreated;
 use Prettus\Repository\Events\RepositoryEntityUpdated;
+use Prettus\Repository\Events\RepositoryEntityDeleted;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Database\Query\Grammars;
 use BadMethodCallException;
@@ -168,7 +169,6 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
             case $grammar instanceof Grammars\PostgresGrammar:
             case $grammar instanceof Grammars\SQLiteGrammar:
                 $random = 'RANDOM()';
-                break;
         }
 
         $this->model = $this->model->orderBy(new Expression($random));
@@ -322,6 +322,8 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
                 $value = "(@rownum = @rownum+1)";
                 $return = $reorder($statement, $value);
                 break;
+            default:
+                $return = false;
         }
 
         if ($return) {
@@ -359,6 +361,8 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
      */
     public function validar(array $attributes, $action, $id = null)
     {
+        $return = false;
+
         if (!is_null($this->validator)) {
             // we should pass data that has been casts by the model
             // to make sure data type are same because validator may need to use
@@ -372,10 +376,10 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
                 $validator->setId($id);
             }
 
-            return $validator->passesOrFail($action);
+            $return = $validator->passesOrFail($action);
         }
 
-        return false;
+        return $return;
     }
 
     /**
@@ -426,6 +430,60 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
         event(new RepositoryEntityUpdated($this, $model));
 
         return $this->parserResult($model);
+    }
+
+    /**
+     * Delete multiple entities by given criteria.
+     *
+     * @param array $where
+     *
+     * @return int
+     */
+    public function deleteWhere(array $where)
+    {
+        $this->applyCriteria();
+        $this->applyScope();
+        
+        $temporarySkipPresenter = $this->skipPresenter;
+        $this->skipPresenter(true);
+
+        $this->whereInputCriteria($where);
+
+        $deleted = $this->model->delete();
+
+        event(new RepositoryEntityDeleted($this, $this->model));
+
+        $this->skipPresenter($temporarySkipPresenter);
+        $this->resetModel();
+
+        return $deleted;
+    }
+
+    /**
+     * Update multiple entities by given criteria.
+     *
+     * @param array $where
+     *
+     * @return int
+     */
+    public function updateWhere(array $attributes, array $where)
+    {
+        $this->applyCriteria();
+        $this->applyScope();
+
+        $temporarySkipPresenter = $this->skipPresenter;
+        $this->skipPresenter(true);
+
+        $this->whereInputCriteria($where);
+
+        $updated = $this->model->update($attributes);
+
+        event(new RepositoryEntityUpdated($this, $this->model));
+
+        $this->skipPresenter($temporarySkipPresenter);
+        $this->resetModel();
+
+        return $updated;
     }
 
     /**

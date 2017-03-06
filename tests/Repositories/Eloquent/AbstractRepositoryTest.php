@@ -533,6 +533,40 @@ class AbstractRepositoryTest extends TestCase
 
         $this->assertEquals($new_model, $repo->update($input, $id));
     }
+
+    public function testDeleteWhere()
+    {
+        $where = ['search' => 'busca_registros'];
+        $attributes = ['foo' => 'bar', 'test' => 'barrrr'];
+
+        $this->model->shouldReceive('delete')->once()->andReturn(true);
+
+        $events = m::mock('events');
+        $events->shouldReceive('fire')->once();
+        $this->app->instance('events', $events);
+
+        $repo = m::mock(StubAbstractRepository::class.'[whereInputCriteria]', [$this->app]);
+        $repo->shouldReceive('whereInputCriteria')->once()->with($where)->andReturn($repo);
+
+        $this->assertTrue($repo->deleteWhere($where));
+    }
+
+    public function testUpdateWhere()
+    {
+        $where = ['search' => 'busca_registros'];
+        $attributes = ['foo' => 'bar', 'test' => 'barrrr'];
+
+        $this->model->shouldReceive('update')->once()->with($attributes)->andReturn(true);
+
+        $events = m::mock('events');
+        $events->shouldReceive('fire')->once();
+        $this->app->instance('events', $events);
+
+        $repo = m::mock(StubAbstractRepository::class.'[whereInputCriteria]', [$this->app]);
+        $repo->shouldReceive('whereInputCriteria')->once()->with($where)->andReturn($repo);
+
+        $this->assertTrue($repo->updateWhere($attributes, $where));
+    }
 }
 
 class StubAbstractRepository extends \NwLaravel\Repositories\Eloquent\AbstractRepository
