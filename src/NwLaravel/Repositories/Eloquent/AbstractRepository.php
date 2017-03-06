@@ -302,8 +302,6 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
                         ->update($data);
         };
 
-        $return = false;
-
         switch (true) {
             case $conn instanceof \Illuminate\Database\MySqlConnection:
                 $statement = "SET @rownum := 0";
@@ -437,7 +435,7 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
      *
      * @param array $where
      *
-     * @return int
+     * @return boolean|null
      */
     public function deleteWhere(array $where)
     {
@@ -464,7 +462,7 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
      *
      * @param array $where
      *
-     * @return int
+     * @return boolean|null
      */
     public function updateWhere(array $attributes, array $where)
     {
@@ -491,7 +489,8 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
      *
      * @param  string  $method
      * @param  array   $parameters
-     * @return mixed
+     *
+     * @return AbstractRepository
      *
      * @throws BadMethodCallException
      */

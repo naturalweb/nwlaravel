@@ -5,7 +5,6 @@ namespace NwLaravel\FileStorage;
 use \Exception;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Illuminate\Contracts\Filesystem\Filesystem as Storage;
-use Intervention\Image\ImageManager;
 use Intervention\Image\Image;
 
 /**
@@ -164,23 +163,23 @@ class StorageManager
     /**
      * Delete Folder
      *
-     * @param string $folder Path Folder
+     * @param string $folder
      *
      * @return bool
      */
-    public function deleteFolder($path)
+    public function deleteFolder($folder)
     {
-        if ($this->isFile($path)) {
+        if ($this->isFile($folder)) {
             return false;
         }
 
-        return $this->storage->deleteDirectory($path);
+        return $this->storage->deleteDirectory($folder);
     }
 
     /**
      * Files in Folder
      *
-     * @param string $folder
+     * @param string $path
      * @param bool   $recursive
      *
      * @return array

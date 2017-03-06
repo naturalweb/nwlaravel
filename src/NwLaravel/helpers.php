@@ -153,8 +153,8 @@ if (! function_exists('toFixed')) {
     /**
      * To Fixed
      *
-     * @param int   $number  Integer Number
-     * @param float $decimal Float Decimal
+     * @param int $number  Integer Number
+     * @param int $decimal Float Decimal
      *
      * @return float
      */
@@ -499,18 +499,18 @@ if (! function_exists('formatNumber')) {
     /**
      * Formato numero conforme locale
      *
-     * @param int   $valor    Integer Valor
-     * @param float $decimais Float Decimais
+     * @param float $valor
+     * @param int   $decimal
      *
      * @return string
      * @example : formatNumber(8712.335) = 8.712,34
      */
-    function formatNumber($valor, $decimais = 2)
+    function formatNumber($valor, $decimal = 2)
     {
         $valor   = floatval($valor);
-        $decimais = intval($decimais);
+        $decimal = intval($decimal);
 
-        $pattern = sprintf('#,##0.%s', str_pad('', $decimais, '0'));
+        $pattern = sprintf('#,##0.%s', str_pad('', $decimal, '0'));
 
         $fmt = new \NumberFormatter(config('app.locale'), \NumberFormatter::DECIMAL);
         $fmt->setPattern($pattern);

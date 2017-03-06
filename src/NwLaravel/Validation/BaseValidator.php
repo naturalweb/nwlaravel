@@ -80,8 +80,6 @@ abstract class BaseValidator extends AbstractValidator
     /**
      * Get Messages
      *
-     * @param array $messages
-     *
      * @return array
      */
     public function getMessages()
@@ -91,8 +89,6 @@ abstract class BaseValidator extends AbstractValidator
 
     /**
      * Get Attributes
-     *
-     * @param array $attributes
      *
      * @return array
      */
@@ -240,6 +236,13 @@ abstract class BaseValidator extends AbstractValidator
         return $rules;
     }
 
+    /**
+     * Replace Values Rules
+     *
+     * @param string $rule
+     *
+     * @return string
+     */
     protected function replaceValuesRules($rule)
     {
         while (preg_match('/\[([A-Za-z0-9_]+)\]/', $rule, $match)) {

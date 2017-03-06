@@ -2,30 +2,69 @@
 
 namespace NwLaravel\Locale;
 
-use Locale as PhpLocale;
-
 class Locale
 {
+    /**
+     * Extenso Ordinal
+     *
+     * @param float $number
+     *
+     * @return string
+     * @static
+     */
     public static function extensoOrdinal($number)
     {
         return self::numberToWords($number, false, true);
     }
 
+    /**
+     * Extenso Currency
+     *
+     * @param float $number
+     *
+     * @return string
+     * @static
+     */
     public static function extensoCurrency($number)
     {
         return self::numberToWords($number, true, false);
     }
 
+    /**
+     * Extenso Cardinal
+     *
+     * @param float $number
+     *
+     * @return string
+     * @static
+     */
     public static function extensoCardinal($number)
     {
         return self::numberToWords($number, false, false);
     }
 
+    /**
+     * Extenso
+     *
+     * @param float $number
+     *
+     * @return string
+     * @static
+     */
     public static function extenso($number)
     {
         return self::extensoCurrency($number);
     }
 
+    /**
+     * Translate
+     *
+     * @param boolean $currency
+     * @param boolean $ordinals
+     *
+     * @return string
+     * @static
+     */
     protected static function translate($currency = false, $ordinals = false)
     {
         $translate = array();
