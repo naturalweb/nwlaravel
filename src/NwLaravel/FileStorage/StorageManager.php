@@ -250,7 +250,9 @@ class StorageManager
             $imagine->opacity($opacity);
             $imagine->watermark($watermark);
                 
-            $content = $imagine->encode($data['extension'], $quality)->getEncoded();
+            $image = $imagine->save($pathImage.'.'.$data['extension'], $quality);
+            $data['size'] = $image->filesize();
+            $content = $image->getEncoded();
         } else {
             $content = file_get_contents($file);
         }

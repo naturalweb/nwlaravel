@@ -264,6 +264,7 @@ class StorageManagerTest extends TestCase
         $content = 'conteudo binary image';
         $mockImage = m::mock(Image::class);
         $mockImage->shouldReceive('getEncoded')->once()->andReturn($content);
+        $mockImage->shouldReceive('filesize')->once()->andReturn(123456);
 
         $mockStorage = m::mock(Storage::class);
         $mockStorage->shouldReceive('makeDirectory')->once()->ordered()->with("{$folderUpload}/")->andReturn(true);
@@ -274,7 +275,7 @@ class StorageManagerTest extends TestCase
         $mockImagine->shouldReceive('resize')->once()->with(50, 25, true)->andReturn($mockImagine);
         $mockImagine->shouldReceive('opacity')->once()->with(30)->andReturn($mockImagine);
         $mockImagine->shouldReceive('watermark')->once()->with($pathwater)->andReturn($mockImagine);
-        $mockImagine->shouldReceive('encode')->once()->with('png', 77)->andReturn($mockImage);
+        $mockImagine->shouldReceive('save')->once()->with($pathfile.'.png', 77)->andReturn($mockImage);
 
         $mockFactory = m::mock(ImagineFactory::class);
         $mockFactory->shouldReceive('make')->once()->with($pathfile)->andReturn($mockImagine);
@@ -285,7 +286,7 @@ class StorageManagerTest extends TestCase
             'filename' => $filename,
             'name' => $nameUpload,
             'extension' => 'png',
-            'size' => $size,
+            'size' => '123456',
             'mime' => 'image/png',
         ];
         $this->assertEquals($expected, $fileStorage->uploadImage($file, $folderUpload, $nameUpload, $options, true));
