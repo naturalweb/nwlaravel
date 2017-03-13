@@ -68,7 +68,13 @@ class CacheableRepositoryTest extends TestCase
         $cache->shouldReceive('remember')->once()->andReturn($return);
         $this->app->instance('cache', $cache);
 
+        $model = m::mock('Illuminate\Database\Eloquent\Model');
+        $model->shouldReceive('toSql')->once()->andReturn('select * from foobar where id = ?');
+        $model->shouldReceive('getBindings')->once()->andReturn(['id' => 44]);
+        
         $mock = m::mock(StubCacheable::class.'[getCriteria]');
+        $mock->model = $model;
+        $mock->skipPresenter = true;
 
         $criteria = ['where' => '1'];
         $mock->shouldReceive('getCriteria')->once()->andReturn($criteria);
