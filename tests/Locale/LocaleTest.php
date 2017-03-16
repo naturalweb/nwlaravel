@@ -62,6 +62,7 @@ class LocaleTest extends TestCase
             ['onze mil e trezentos e sessenta e quatro, oitenta e nove', 11364.89],
             ['um milhão, quarenta e quatro', 1000000.44],
             ['um milhão e duzentos mil, quarenta e quatro', 1200000.44],
+            ['duzentos e cinquenta e dois mil e um', 252001,00],
         ];
     }
 
@@ -90,6 +91,7 @@ class LocaleTest extends TestCase
             ['cento e dezessete reais e sessenta e sete centavos', 117.67],
             ['cem reais e dezessete centavos', 100.17],
             ['quatro reais e noventa e nove centavos', 4.99],
+            ['duzentos e cinquenta e dois mil e um reais e dois centavos', 252001.02],
             ['um milhão de reais e quarenta e quatro centavos', 1000000.44],
             ['cem milhões de reais', 100000000],
             ['um milhão e duzentos mil reais e quarenta e quatro centavos', 1200000.44],

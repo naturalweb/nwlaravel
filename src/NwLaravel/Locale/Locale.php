@@ -121,15 +121,15 @@ class Locale
             return $number;
         }
 
-        $number = $ordinals ? intval($number) : floatval($number);
+        $valor = $ordinals ? intval($number) : floatval($number);
 
-        if ($ordinals && $number >= 1000) {
-            return $number.'º';
+        if ($ordinals && $valor >= 1000) {
+            return $valor.'º';
         }
 
         $translate = self::translate($currency, $ordinals);
 
-        $number = number_format($number, 2, ".", ".");
+        $number = number_format($valor, 2, ".", ".");
         $inteiro = explode(".", $number);
         for ($i=0;$i<count($inteiro);$i++) {
             for ($ii=strlen($inteiro[$i]);$ii<3;$ii++) {
@@ -180,7 +180,7 @@ class Locale
 
             if ($r) {
                 $r .= " ";
-                if ($number > 1) {
+                if ($number > 1 || ($t == 1 && $valor >= 2)) {
                     $r .= $translate['plural'][$t];
                 } else {
                     $r .= $translate['singular'][$t];
