@@ -181,6 +181,24 @@ class StorageManagerTest extends TestCase
         $this->assertFalse($fileStorage->deleteFolder('path/folder'));
     }
 
+    public function testMove()
+    {
+        $mockStorage = m::mock(Storage::class);
+        $mockStorage->shouldReceive('move')->once()->with('path/from', 'path/to')->andReturn(true);
+
+        $fileStorage = new StorageManager($mockStorage);
+        $this->assertTrue($fileStorage->move('path/from', 'path/to'));
+    }
+
+    public function testCopy()
+    {
+        $mockStorage = m::mock(Storage::class);
+        $mockStorage->shouldReceive('copy')->once()->with('path/from', 'path/to')->andReturn(true);
+
+        $fileStorage = new StorageManager($mockStorage);
+        $this->assertTrue($fileStorage->copy('path/from', 'path/to'));
+    }
+
     public function testShouldFilesSuccess()
     {
         $files = ['file1', 'file2', 'file3'];

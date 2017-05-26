@@ -177,6 +177,30 @@ class StorageManager
     }
 
     /**
+     * Move a file to a new location.
+     *
+     * @param  string  $from
+     * @param  string  $to
+     * @return bool
+     */
+    public function move($from, $to)
+    {
+        return $this->storage->move($from, $to);
+    }
+
+    /**
+     * Copy a file to a new location.
+     *
+     * @param  string  $from
+     * @param  string  $to
+     * @return bool
+     */
+    public function copy($from, $to)
+    {
+        return $this->storage->copy($from, $to);
+    }
+
+    /**
      * Files in Folder
      *
      * @param string $path
