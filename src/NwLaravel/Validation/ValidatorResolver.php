@@ -181,8 +181,17 @@ class ValidatorResolver extends Validator
         for ($i = 0; $i < $count; $i += 2) {
             $field = $parameters[$i];
             $fieldValue = $parameters[$i + 1];
+
+            $data = $this->getValue($field);
+            if (is_bool($data)) {
+                if (strtolower($fieldValue) === 'true') {
+                    $fieldValue = true;
+                } elseif (strtolower($fieldValue) === 'false') {
+                    $fieldValue = false;
+                }
+            }
             
-            if ($fieldValue != $this->getValue($field)) {
+            if ($fieldValue != $data) {
                 $valid = false;
                 break;
             }

@@ -217,11 +217,12 @@ class ValidatorResolverTest extends TestCase
 
     public function testValidateRequiredIfAll()
     {
-        $data = ['pessoa' => 'J', 'tipo' => '1'];
+        $data = ['pessoa' => 'J', 'tipo' => '1', 'status' => false];
         $this->resolver->setData($data);
 
         $this->assertTrue($this->resolver->validateRequiredIfAll('foo', 'bar', ['pessoa', 'J', 'tipo', '1']));
         $this->assertFalse($this->resolver->validateRequiredIfAll('foo', null, ['pessoa', 'J', 'tipo', '1']));
+        $this->assertFalse($this->resolver->validateRequiredIfAll('foo', null, ['pessoa', 'J', 'status', 'false']));
 
         $this->assertTrue($this->resolver->validateRequiredIfAll('foo', null, ['pessoa', 'J', 'tipo', '0']));
         $this->assertTrue($this->resolver->validateRequiredIfAll('foo', null, ['pessoa', 'F', 'tipo', '1']));
