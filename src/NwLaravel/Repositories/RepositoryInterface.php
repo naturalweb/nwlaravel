@@ -101,13 +101,26 @@ interface RepositoryInterface extends BaseInterface
     public function avg($field, array $input = array());
 
     /**
-     * Reorder
+     * Order Up
      *
+     * @param Model  $model
      * @param string $field Field Order
+     * @param array  $input Array Where
      *
      * @return boolean
      */
-    public function reorder($field, $input = null);
+    public function orderUp($model, $field, array $input = []);
+
+    /**
+     * Order Down
+     *
+     * @param Model  $model
+     * @param string $field Field Order
+     * @param array  $input Array Where
+     *
+     * @return boolean
+     */
+    public function orderDown($model, $field, array $input = []);
 
     /**
      * Where InputCriteria

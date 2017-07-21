@@ -281,56 +281,66 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
     }
 
     /**
-     * Reorder
+     * Order Up
      *
+     * @param Model  $model
      * @param string $field Field Order
+     * @param array  $input Array Where
      *
      * @return boolean
      */
-    public function reorder($field, $input = null)
+    public function orderUp($model, $field, array $input = [])
     {
-        $self = $this;
-        $conn = $this->model->getConnection();
+        $input["{$field} <= ?"] = $model->{$field};
+        $input["id != ?"] = $model->id;
+        return $this->reorder($model, $field, $input, 'DESC');
+    }
 
-        $reorder = function ($statement, $value) use ($self, $conn, $input, $field) {
-            $conn->statement($statement);
-            $data = [$field => $conn->raw($value)];
+    /**
+     * Order Down
+     *
+     * @param Model  $model
+     * @param string $field Field Order
+     * @param array  $input Array Where
+     *
+     * @return boolean
+     */
+    public function orderDown($model, $field, array $input = [])
+    {
+        $input["{$field} >= ?"] = $model->{$field};
+        $input["id != ?"] = $model->id;
+        return $this->reorder($model, $field, $input, 'ASC');
+    }
 
-            return $self->whereInputCriteria($input)
-                        ->orderBy($field)
-                        ->getQuery()
-                        ->update($data);
-        };
-
-        switch (true) {
-            case $conn instanceof \Illuminate\Database\MySqlConnection:
-                $statement = "SET @rownum := 0";
-                $value = "(@rownum := @rownum+1)";
-                $return = $reorder($statement, $value);
-                break;
-
-            case $conn instanceof \Illuminate\Database\PostgresConnection:
-                $table = str_slug($this->model->getTable());
-                $seq = "rownum_{$table}_{$field}_seq";
-                $statement = "CREATE TEMPORARY SEQUENCE ". $seq;
-                $value = "NEXTVAL('".$seq."')";
-                $return = $reorder($statement, $value);
-                break;
-
-            case $conn instanceof \Illuminate\Database\SqlServerConnection:
-                $statement = "DECLARE @rownum int; SET @rownum = 0";
-                $value = "(@rownum = @rownum+1)";
-                $return = $reorder($statement, $value);
-                break;
-            default:
-                $return = false;
+    /**
+     * Reorder
+     *
+     * @param Model  $model
+     * @param string $field Field Order
+     * @param array  $input Array Where
+     * @param string $sort  Sort
+     *
+     * @return boolean
+     */
+    protected function reorder($model, $field, array $input, $sort)
+    {
+        if (!$model->exists) {
+            return false;
         }
 
-        if ($return) {
-            return $return;
+        $order = $model->{$field};
+
+        $anterior = $this->whereInputCriteria($input)->orderBy($field, $sort)->first();
+
+        if ($anterior) {
+            $model->{$field} = $anterior->{$field};
+            $model->save();
+
+            $anterior->{$field} = $order;
+            $anterior->save();
         }
 
-        throw new RuntimeException(sprintf("Reorder not valid for connection (%s)", get_class($conn)));
+        return true;
     }
 
     /**
