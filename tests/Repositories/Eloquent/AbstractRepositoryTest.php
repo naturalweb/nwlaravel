@@ -188,16 +188,21 @@ class AbstractRepositoryTest extends TestCase
     public function testReorderWithPostgres()
     {
         $conn = m::mock('Illuminate\Database\PostgresConnection');
-        $conn->shouldReceive('statement')->once()->with("CREATE TEMPORARY SEQUENCE rownum_seq");
-        $conn->shouldReceive('raw')->once()->with("NETVAL('rownum_seq')")->andReturn("NETVAL('rownum_seq')");
+        $conn->shouldReceive('statement')->once()->with("CREATE TEMPORARY SEQUENCE rownum_logisticafoobars_ordem_seq");
+        $conn->shouldReceive('raw')->once()->with("NEXTVAL('rownum_logisticafoobars_ordem_seq')")->andReturn("NEXTVAL('rownum_logisticafoobars_ordem_seq')");
         
         $this->model
             ->shouldReceive('getConnection')
             ->once()
             ->andReturn($conn);
 
+        $this->model
+            ->shouldReceive('getTable')
+            ->once()
+            ->andReturn('logistica.foobars');
+
         $query = m::mock('Eloquent\Builder');
-        $query->shouldReceive('update')->once()->with(['ordem' => "NETVAL('rownum_seq')"])->andReturn(true);
+        $query->shouldReceive('update')->once()->with(['ordem' => "NEXTVAL('rownum_logisticafoobars_ordem_seq')"])->andReturn(true);
 
         $repo = m::mock(StubAbstractRepository::class.'[whereInputCriteria, orderBy, getQuery]', [$this->app]);
         $repo->shouldReceive('whereInputCriteria')->once()->with(['where' => 'foo'])->andReturn($repo);

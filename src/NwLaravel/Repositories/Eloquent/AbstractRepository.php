@@ -310,8 +310,10 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
                 break;
 
             case $conn instanceof \Illuminate\Database\PostgresConnection:
-                $statement = "CREATE TEMPORARY SEQUENCE rownum_seq";
-                $value = "NETVAL('rownum_seq')";
+                $table = str_slug($this->model->getTable());
+                $seq = "rownum_{$table}_{$field}_seq";
+                $statement = "CREATE TEMPORARY SEQUENCE ". $seq;
+                $value = "NEXTVAL('".$seq."')";
                 $return = $reorder($statement, $value);
                 break;
 
