@@ -508,10 +508,15 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
      */
     public function __call($method, $parameters)
     {
-        $pattern = '/^(((where|orWhere).*)|limit|groupBy|join|leftJoin|rightJoin|crossJoin)$/';
+        $pattern = '/^(((where|orWhere).*)|select|limit|groupBy|join|leftJoin|rightJoin|crossJoin)$/';
         if (preg_match($pattern, $method)) {
             $this->model = call_user_func_array([$this->model, $method], $parameters);
             return $this;
+        }
+
+        $pattern = '/^(toSql|getBindings)$/';
+        if (preg_match($pattern, $method)) {
+            return call_user_func_array([$this->model, $method], $parameters);
         }
 
         $className = static::class;
