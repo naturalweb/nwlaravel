@@ -488,10 +488,10 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
 
         $updated = $this->model->update($attributes);
 
-        event(new RepositoryEntityUpdated($this, $this->model));
-
         $this->skipPresenter($temporarySkipPresenter);
         $this->resetModel();
+
+        event(new RepositoryEntityUpdated($this, $this->model));
 
         return $updated;
     }
