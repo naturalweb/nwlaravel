@@ -28,7 +28,7 @@ class IteratorFileCsvTest extends TestCase
     {
         $iterator = new IteratorFileCsv(__DIR__.'/stub.csv');
 
-        $this->assertEquals(4, count($iterator));
+        $this->assertEquals(5, count($iterator));
     }
 
     public function testGetHeaders()

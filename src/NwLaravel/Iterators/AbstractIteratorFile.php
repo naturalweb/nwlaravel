@@ -64,17 +64,10 @@ abstract class AbstractIteratorFile implements \Iterator, \Countable
     {
         if (is_null($this->count)) {
             $this->count = 0;
-
-            // Salva a posição do ponteiro de leitura
-            $tell = ftell($this->fileHandle);
-            rewind($this->fileHandle);
-
-            while (!feof($this->fileHandle) && false !== fgets($this->fileHandle)) {
-                $this->count += 1;
+            $data = (array) stream_get_meta_data($this->fileHandle);
+            if (isset($data['uri'])) {
+                $this->count = intval(@exec("wc -l '".$data['uri']."'"));
             }
-
-            // Restabelece a posição do ponteiro
-            fseek($this->fileHandle, $tell);
         }
 
         return $this->count;

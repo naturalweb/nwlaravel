@@ -39,6 +39,7 @@ class IteratorFileCsv extends AbstractIteratorFile implements IteratorInterface
 
     const DELIMITER_DEFAULT = ';';
     const ENCLOSURE_DEFAULT = '"';
+    const ESCAPE_DEFAULT = '\\';
 
    /**
      * Abre o arquivo para leitura e define a variaveis
@@ -63,7 +64,7 @@ class IteratorFileCsv extends AbstractIteratorFile implements IteratorInterface
         $this->setHeaders($headers);
         $this->delimiter = (string) !is_null($delimiter) ? $delimiter : self::DELIMITER_DEFAULT;
         $this->enclosure = $enclosure ?: self::ENCLOSURE_DEFAULT;
-        $this->escape    = $escape ? $escape : null;
+        $this->escape    = $escape ?: self::ESCAPE_DEFAULT;
     }
 
     /**
@@ -73,12 +74,15 @@ class IteratorFileCsv extends AbstractIteratorFile implements IteratorInterface
      */
     private function rowArray()
     {
-        $row = null;
-        $line = $this->getLine();
-
-        if ($line !== false && !is_null($line)) {
-            $row = str_getcsv($line, $this->delimiter, $this->enclosure, $this->escape);
-            $row = array_map("trim", $row);
+        $row = fgetcsv($this->fileHandle, null, $this->delimiter, $this->enclosure, $this->escape);
+        if (is_array($row)) {
+            $row = array_map(function ($value) {
+                $value = trim($value);
+                if (mb_detect_encoding($value, 'UTF-8', true) != 'UTF-8') {
+                    $value = utf8_encode($value);
+                }
+                return $value;
+            }, $row);
         }
 
         return $row;
@@ -92,7 +96,7 @@ class IteratorFileCsv extends AbstractIteratorFile implements IteratorInterface
     public function makeCurrent()
     {
         $row = $this->rowArray();
-        if (is_null($row)) {
+        if (!is_array($row)) {
             return false;
         }
 
@@ -123,15 +127,19 @@ class IteratorFileCsv extends AbstractIteratorFile implements IteratorInterface
     }
 
     /**
-     * Conta as linhas pulando o cabeçalho, se existir
+     * Conta as linhas como csv
      *
      * @return integer
      */
     public function count()
     {
         if (is_null($this->count)) {
-            $this->count = parent::count();
-            $this->count -= 1;
+            $this->count = 0;
+            $data = (array) stream_get_meta_data($this->fileHandle);
+            if (isset($data['uri'])) {
+                $cmd = 'awk -v RS=\'"\' \'NR % 2 == 0 { gsub(/\n/, "") } { printf("%s%s", $0, RT) }\' ' . $data['uri'] . ' | wc -l';
+                $this->count = intval(@exec($cmd));
+            }
         }
 
         return $this->count;
