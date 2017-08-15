@@ -1,12 +1,8 @@
 <?php
-
 namespace NwLaravel\Repositories\Criterias;
 
-use Datetime;
-use InvalidArgumentException;
 use Prettus\Repository\Contracts\CriteriaInterface;
 use Prettus\Repository\Contracts\RepositoryInterface;
-use Illuminate\Database\Query\Expression as QueryExpression;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
 use NwLaravel\Entities\AbstractEntity;
@@ -178,65 +174,29 @@ class InputCriteria implements CriteriaInterface
 
         if ($model instanceof Model) {
             $this->dates = $model->getDates();
-            $this->table = $model->getTable().'.';
+            $this->table = $model->getTable();
         }
 
         if ($model instanceof AbstractEntity) {
             $this->addColumns($model->columns());
         }
 
+        $filters = [
+            new Filters\FilterClosure,
+            new Filters\FilterScope($model),
+            new Filters\FilterSearch($this->nameSearchable, $this->searchables, $this->table),
+            new Filters\FilterExpression,
+            new Filters\FilterArray($this->table, $this->columns, $this->dates),
+            new Filters\FilterWhere($this->table, $this->columns, $this->dates),
+        ];
+
         foreach ($this->input as $key => $value) :
-            // Parameter Grouping
-            if ($value instanceof \Closure) {
-                $query = $query->where($value);
-                continue;
-            }
 
-            // Scope
-            $methodScope = 'scope' . studly_case($key);
-            if (is_object($model) && method_exists($model, $methodScope)) {
-                $methodName = camel_case($key);
-                $query = $query->{$methodName}($value);
-                continue;
-            }
-
-            // Where Search
-            if ($key === $this->nameSearchable) {
-                $query = $this->whereSearch($query, $value);
-                continue;
-            }
-
-            if (is_int($key)) {
-                // Using A Raw Expression
-                if ($value instanceof QueryExpression) {
-                    $query = $query->whereRaw($value);
+            foreach ($filters as $filter) {
+                if ($filter->filter($query, $key, $value)) {
+                    break;
                 }
-
-                /**
-                 * Using String Format
-                 * eg: {field},{operator},{value}
-                 */
-                if (is_string($value) && preg_match('/^([a-zA-Z0-9_]+),(.+),(.+)$/', $value, $matches)) {
-                    if (count($matches)==4) {
-                        $value = array_splice($matches, 1, 3);
-                    }
-                }
-
-                /**
-                 * Using Array com Operator
-                 * eg: ex: ('field', '=', 'value') or ('field', 'value')
-                 */
-                if (is_array($value) && count($value)) {
-                    $value = array_pad($value, 3, null);
-                    list($field, $operator, $valor) = array_splice($value, 0, 3);
-                    $query = $this->whereCriteria($query, $field, $operator, $valor);
-                }
-
-                continue;
             }
-
-            $query = $this->whereCriteria($query, $key, '=', $value);
-
         endforeach;
 
         // Order By

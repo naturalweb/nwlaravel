@@ -80,7 +80,7 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
             ->limit($limit);
 
         $this->resetModel();
-        return app(BuilderResultset::class, [$query]);
+        return new BuilderResultset($query);
     }
 
     /**
@@ -353,7 +353,7 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
     public function whereInputCriteria(array $input = array())
     {
         if (count($input)) {
-            $criteria = app(InputCriteria::class, [$input]);
+            $criteria = new InputCriteria($input);
             $this->model = $criteria->apply($this->model, $this);
         }
 

@@ -14,7 +14,7 @@ class ModelResultsetTest extends PHPUnit_Framework_TestCase
         
         $conn = m::mock('Illuminate\Database\Connection');
 
-        $this->statement = $this->getMock('PDOStatement');
+        $this->statement = $this->createMock('PDOStatement');
         
         $this->prototype = m::mock('Illuminate\Database\Eloquent\Model[]');
 

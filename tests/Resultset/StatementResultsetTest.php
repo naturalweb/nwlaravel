@@ -9,7 +9,7 @@ class StatementResultsetTest extends PHPUnit_Framework_TestCase
 {
     public function testConstruct()
     {
-        $statement = $this->getMock('PDOStatement');
+        $statement = $this->createMock('PDOStatement');
         $resultSet = new StatementResultset($statement);
 
         $this->assertInstanceOf('NwLaravel\Resultset\AbstractResultset', $resultSet);

@@ -133,7 +133,7 @@ class ValidatorResolver extends Validator
             return $this->validateRequired($attribute, $value);
         }
 
-        $this->mergeRules($attribute, 'nullable');
+        $this->addRules([$attribute => ['nullable']]);
 
         return true;
     }
@@ -158,7 +158,7 @@ class ValidatorResolver extends Validator
             return $this->validateRequired($attribute, $value);
         }
 
-        $this->mergeRules($attribute, 'nullable');
+        $this->addRules([$attribute => ['nullable']]);
 
         return true;
     }
@@ -190,7 +190,7 @@ class ValidatorResolver extends Validator
                     $fieldValue = false;
                 }
             }
-            
+
             if ($fieldValue != $data) {
                 $valid = false;
                 break;
@@ -201,7 +201,7 @@ class ValidatorResolver extends Validator
             return $this->validateRequired($attribute, $value);
         }
 
-        $this->mergeRules($attribute, 'nullable');
+        $this->addRules([$attribute => ['nullable']]);
 
         return true;
     }
@@ -224,7 +224,7 @@ class ValidatorResolver extends Validator
         for ($i = 0; $i < $count; $i += 2) {
             $field = $parameters[$i];
             $fieldValue = $parameters[$i + 1];
-            
+
             if ($fieldValue == $this->getValue($field)) {
                 $valid = false;
                 break;
@@ -235,7 +235,7 @@ class ValidatorResolver extends Validator
             return $this->validateRequired($attribute, $value);
         }
 
-        $this->mergeRules($attribute, 'nullable');
+        $this->addRules([$attribute => ['nullable']]);
 
         return true;
     }

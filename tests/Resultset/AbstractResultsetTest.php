@@ -19,7 +19,7 @@ class AbstractResultsetTest extends PHPUnit_Framework_TestCase
     public function setup()
     {
         parent::setUp();
-        $this->statement = $this->getMock('PDOStatement');
+        $this->statement = $this->createMock('PDOStatement');
     }
 
     public function testConstruct()

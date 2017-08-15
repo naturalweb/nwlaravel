@@ -16,10 +16,6 @@ class HelpersTest extends TestCase
     {
         parent::setUp();
 
-        $grammar = m::mock('Illuminate\Database\Grammar');
-        $grammar->shouldReceive('getDateFormat')->andReturn('Y-m-d H:i:s');
-        DB::shouldReceive('getQueryGrammar')->andReturn($grammar);
-
         $this->config = m::mock('config');
         $this->config->shouldReceive('get')->with('nwlaravel.date_format', null)->andReturn('d/m/Y H:i');
         $this->config->shouldReceive('get')->with('app.timezone', null)->andReturn('America/Sao_Paulo');

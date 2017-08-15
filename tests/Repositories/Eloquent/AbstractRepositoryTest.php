@@ -19,8 +19,13 @@ class AbstractRepositoryTest extends TestCase
     {
         parent::setUp();
         $this->model = m::mock(Model::class);
+        $this->model->shouldReceive('getDates')->andReturn([]);
+        $this->model->shouldReceive('getTable')->andReturn('foo');
         $this->app->instance(Model::class, $this->model);
 
+        $this->config = m::mock('config');
+        $this->config->shouldReceive('get')->andReturn('');
+        $this->app->instance('config', $this->config);
     }
 
     public function testImplementsInstanceOf()
@@ -38,10 +43,6 @@ class AbstractRepositoryTest extends TestCase
 
         $repo = m::mock(StubAbstractRepository::class.'[orderBy, paginate]', [$this->app]);
 
-        $criteria = m::mock(InputCriteria::class);
-        $criteria->shouldReceive('apply')->once()->with($this->model, $repo)->andReturn($this->model);
-        $this->app->instance(InputCriteria::class, $criteria);
-
         $repo->shouldReceive('orderBy')->once()->with('name DESC')->andReturn($repo);
         $repo->shouldReceive('paginate')->once()->with(20)->andReturn($result);
 
@@ -50,25 +51,34 @@ class AbstractRepositoryTest extends TestCase
 
     public function testSearchAll()
     {
-        $result = ['result-all'];
-        $input = ['foo', 'bar' => 'baz'];
+        $sql = 'select * from foobar ORDER BY name DESC LIMIT 100';
+        $bindings = [];
+        $statement = m::mock('PDOStatement');
+        $statement->shouldReceive('execute')->once()->with($bindings)->andReturn(true);
+        $pdo = m::mock('PDO');
+        $pdo->shouldReceive('prepare')->once()->with($sql)->andReturn($statement);
+        $conn = m::mock('Illuminate\Database\Connection');
+        $conn->shouldReceive('getPdo')->once()->andReturn($pdo);
+        $conn->shouldReceive('prepareBindings')->once()->with($bindings)->andReturn($bindings);
+        $builder = m::mock('Illuminate\Database\Query\Builder');
+        $builder->shouldReceive('toSql')->once()->andReturn($sql);
+        $builder->shouldReceive('getBindings')->once()->andReturn($bindings);
+        $builder->shouldReceive('getConnection')->once()->andReturn($conn);
+        $prototype = m::mock('Illuminate\Database\Eloquent\Model[]');
+        $this->model->shouldReceive('newFromBuilder')->once()->andReturn($prototype);
 
         $query = m::mock(Builder::class);
-        $query->shouldReceive('limit')->with(100)->andReturn($result);
+        $query->shouldReceive('toBase')->andReturn($builder);
+        $query->shouldReceive('getModel')->once()->andReturn($this->model);
+        $query->shouldReceive('limit')->with(100)->andReturn($query);
 
         $repo = m::mock(StubAbstractRepository::class.'[skipPresenter, orderBy, getQuery]', [$this->app]);
         $repo->shouldReceive('skipPresenter')->once()->with(true)->andReturn($repo);
         $repo->shouldReceive('orderBy')->once()->with('name DESC')->andReturn($repo);
         $repo->shouldReceive('getQuery')->once()->andReturn($query);
 
-        $criteria = m::mock(InputCriteria::class);
-        $criteria->shouldReceive('apply')->once()->with($this->model, $repo)->andReturn($this->model);
-        $this->app->instance(InputCriteria::class, $criteria);
-
-        $resultset = m::mock(BuilderResultset::class);
-        $this->app->instance(BuilderResultset::class, $resultset);
-
-        $this->assertEquals($resultset, $repo->searchAll($input, 'name DESC', 100, true));
+        $resultset = $repo->searchAll([], 'name DESC', 100, true);
+        $this->assertInstanceOf(BuilderResultset::class, $resultset);
     }
 
     public function testWhere()
@@ -189,10 +199,6 @@ class AbstractRepositoryTest extends TestCase
 
         $repo = new StubAbstractRepository($this->app);
 
-        $criteria = m::mock(InputCriteria::class);
-        $criteria->shouldReceive('apply')->once()->with($this->model, $repo)->andReturn($this->model);
-        $this->app->instance(InputCriteria::class, $criteria);
-
         $this->assertEquals(33, $repo->count($input));
     }
 
@@ -207,10 +213,6 @@ class AbstractRepositoryTest extends TestCase
         $input = ['foo', 'bar' => 'baz'];
 
         $repo = new StubAbstractRepository($this->app);
-
-        $criteria = m::mock(InputCriteria::class);
-        $criteria->shouldReceive('apply')->once()->with($this->model, $repo)->andReturn($this->model);
-        $this->app->instance(InputCriteria::class, $criteria);
 
         $this->assertEquals(52, $repo->max('fieldmax', $input));
     }
@@ -227,10 +229,6 @@ class AbstractRepositoryTest extends TestCase
 
         $repo = new StubAbstractRepository($this->app);
 
-        $criteria = m::mock(InputCriteria::class);
-        $criteria->shouldReceive('apply')->once()->with($this->model, $repo)->andReturn($this->model);
-        $this->app->instance(InputCriteria::class, $criteria);
-
         $this->assertEquals(1, $repo->min('fieldmin', $input));
     }
 
@@ -246,10 +244,6 @@ class AbstractRepositoryTest extends TestCase
 
         $repo = new StubAbstractRepository($this->app);
 
-        $criteria = m::mock(InputCriteria::class);
-        $criteria->shouldReceive('apply')->once()->with($this->model, $repo)->andReturn($this->model);
-        $this->app->instance(InputCriteria::class, $criteria);
-
         $this->assertEquals(166, $repo->sum('fieldsum', $input));
     }
 
@@ -264,10 +258,6 @@ class AbstractRepositoryTest extends TestCase
         $input = ['foo', 'bar' => 'baz'];
 
         $repo = new StubAbstractRepository($this->app);
-
-        $criteria = m::mock(InputCriteria::class);
-        $criteria->shouldReceive('apply')->once()->with($this->model, $repo)->andReturn($this->model);
-        $this->app->instance(InputCriteria::class, $criteria);
 
         $this->assertEquals(10.5, $repo->avg('fieldavg', $input));
     }
@@ -383,25 +373,12 @@ class AbstractRepositoryTest extends TestCase
         $this->assertEquals($builder, $repo->getQuery());
     }
 
-    public function testWhereInputCriteria()
-    {
-        $input = ['foo', 'bar' => 'baz'];
-
-        $repo = new StubAbstractRepository($this->app);
-
-        $criteria = m::mock(InputCriteria::class);
-        $criteria->shouldReceive('apply')->once()->with($this->model, $repo)->andReturn($this->model);
-        $this->app->instance(InputCriteria::class, $criteria);
-
-        $this->assertEquals($repo, $repo->whereInputCriteria($input));
-    }
-
     public function testCreate()
     {
         $toArray = ['foo' => 'bar'];
         $input = ['foo' => '', 'test' => 'barrrr'];
         $attributes = ['foo' => 'bar', 'test' => 'barrrr'];
-        
+
         $validator = m::mock('Prettus\Validator\LaravelValidator');
         $validator->shouldReceive('with')->with($attributes)->andReturn($validator);
         $validator->shouldReceive('passesOrFail')->with(ValidatorInterface::RULE_CREATE);
@@ -412,12 +389,12 @@ class AbstractRepositoryTest extends TestCase
         $modelValid->shouldReceive('save')->once();
         $this->model->shouldReceive('newInstance')->twice()->ordered()->andReturn($modelValid);
 
-        $events = m::mock('events');
-        $events->shouldReceive('fire')->once();
-        $this->app->instance('events', $events);
-
         $repo = new StubAbstractRepository($this->app);
         $repo->makeValidator($validator);
+
+        $events = m::mock('events');
+        $events->shouldReceive('dispatch')->once();
+        $this->app->instance('events', $events);
 
         $this->assertEquals($modelValid, $repo->create($input));
     }
@@ -444,12 +421,12 @@ class AbstractRepositoryTest extends TestCase
         $new_model->shouldReceive('save')->once();
         $this->model->shouldReceive('findOrFail')->once()->ordered()->with($id)->andReturn($new_model);
 
-        $events = m::mock('events');
-        $events->shouldReceive('fire')->once();
-        $this->app->instance('events', $events);
-
         $repo = new StubAbstractRepository($this->app);
         $repo->makeValidator($validator);
+
+        $events = m::mock('events');
+        $events->shouldReceive('dispatch')->once();
+        $this->app->instance('events', $events);
 
         $this->assertEquals($new_model, $repo->update($input, $id));
     }
@@ -461,12 +438,12 @@ class AbstractRepositoryTest extends TestCase
 
         $this->model->shouldReceive('delete')->once()->andReturn(true);
 
-        $events = m::mock('events');
-        $events->shouldReceive('fire')->once();
-        $this->app->instance('events', $events);
-
         $repo = m::mock(StubAbstractRepository::class.'[whereInputCriteria]', [$this->app]);
         $repo->shouldReceive('whereInputCriteria')->once()->with($where)->andReturn($repo);
+
+        $events = m::mock('events');
+        $events->shouldReceive('dispatch')->once();
+        $this->app->instance('events', $events);
 
         $this->assertTrue($repo->deleteWhere($where));
     }
@@ -478,12 +455,12 @@ class AbstractRepositoryTest extends TestCase
 
         $this->model->shouldReceive('update')->once()->with($attributes)->andReturn(true);
 
-        $events = m::mock('events');
-        $events->shouldReceive('fire')->once();
-        $this->app->instance('events', $events);
-
         $repo = m::mock(StubAbstractRepository::class.'[whereInputCriteria]', [$this->app]);
         $repo->shouldReceive('whereInputCriteria')->once()->with($where)->andReturn($repo);
+
+        $events = m::mock('events');
+        $events->shouldReceive('dispatch')->once();
+        $this->app->instance('events', $events);
 
         $this->assertTrue($repo->updateWhere($attributes, $where));
     }

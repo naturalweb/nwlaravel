@@ -5,7 +5,7 @@ use Tests\TestCase;
 use Mockery as m;
 use NwLaravel\Validation\ValidatorResolver;
 use Illuminate\Validation\Validator;
-use Symfony\Component\Translation\TranslatorInterface;
+use Illuminate\Contracts\Translation\Translator;
 use Respect\Validation\Rules;
 
 class ValidatorResolverTest extends TestCase
@@ -13,7 +13,7 @@ class ValidatorResolverTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->translator = m::mock(TranslatorInterface::class);
+        $this->translator = m::mock(Translator::class);
         $this->resolver = new ValidatorResolver($this->translator, [], []);
     }
 

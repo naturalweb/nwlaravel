@@ -114,10 +114,6 @@ class AbstractEntityTest extends TestCase
 
     public function testMethodFrontDateTime()
     {
-        $grammar = m::mock('Illuminate\Database\Grammar');
-        $grammar->shouldReceive('getDateFormat')->andReturn('Y-m-d H:i:s');
-        DB::shouldReceive('getQueryGrammar')->andReturn($grammar);
-
         $this->config = m::mock('config');
         $this->config->shouldReceive('get')->with('nwlaravel.date_format', null)->andReturn('d/m/Y');
         $this->app->instance('config', $this->config);
@@ -137,10 +133,6 @@ class AbstractEntityTest extends TestCase
 
     public function testMethodAsDateTime()
     {
-        $grammar = m::mock('Illuminate\Database\Grammar');
-        $grammar->shouldReceive('getDateFormat')->andReturn('Y-m-d H:i:s');
-        DB::shouldReceive('getQueryGrammar')->andReturn($grammar);
-        
         $this->config = m::mock('config');
         $this->config->shouldReceive('get')->with('nwlaravel.date_format', null)->andReturn('d/m/Y');
         $this->app->instance('config', $this->config);
@@ -161,9 +153,9 @@ class AbstractEntityTest extends TestCase
     {
         $query = m::mock('query');
 
-        $criteria = m::mock('NwLaravel\Repositories\Criterias\InputCriteria');
-        $criteria->shouldReceive('apply')->once()->with($query)->andReturn($query);
-        $this->app->instance('NwLaravel\Repositories\Criterias\InputCriteria', $criteria);
+        $this->config = m::mock('config');
+        $this->config->shouldReceive('get')->andReturn('');
+        $this->app->instance('config', $this->config);
 
         $entity = m::mock(AbstractEntity::class.'[]');
         $this->assertEquals($query, $entity->scopeWhereCriteria($query, ['foo']));

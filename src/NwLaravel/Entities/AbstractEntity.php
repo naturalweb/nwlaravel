@@ -195,14 +195,14 @@ abstract class AbstractEntity extends Model implements Presentable
     /**
      * Scope Where Criteria
      *
-     * @param unknown $query      Query
-     * @param array $input      Input
+     * @param unknown $query Query
+     * @param array $input   Input
      *
      * @return mixed
      */
     public function scopeWhereCriteria($query, array $input)
     {
-        $criteria = app(InputCriteria::class, [$input]);
+        $criteria = new InputCriteria($input);
         return $criteria->apply($query);
     }
 }

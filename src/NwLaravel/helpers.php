@@ -80,7 +80,7 @@ if (! function_exists('asDateTime')) {
         }
 
         if (is_string($value)) {
-            $formatDB = DB::getQueryGrammar()->getDateFormat();
+            $formatDB = 'Y-m-d H:i:s';
             $dateFormat = config('nwlaravel.date_format');
             $formats = array_merge([$formatDB, $dateFormat], explode(" ", $dateFormat));
             foreach ($formats as $format) {
@@ -113,7 +113,7 @@ if (! function_exists('fromDateTime')) {
      */
     function fromDateTime($value)
     {
-        $formatDB = DB::getQueryGrammar()->getDateFormat();
+        $formatDB = 'Y-m-d H:i:s';
 
         if (is_numeric($value)) {
             $value = Carbon::createFromTimestamp($value);
