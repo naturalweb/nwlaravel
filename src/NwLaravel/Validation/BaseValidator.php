@@ -170,10 +170,6 @@ abstract class BaseValidator extends AbstractValidator
      */
     protected function parserValidationRules($rules, $id = null)
     {
-        if ($id === null) {
-            return $rules;
-        }
-
         array_walk($rules, function (&$rules, $field) use ($id) {
             if (!is_array($rules)) {
                 $rules = explode("|", $rules);
@@ -195,9 +191,9 @@ abstract class BaseValidator extends AbstractValidator
                     continue;
                 }
 
-                // ATUALIZA RULES UNIQUE
+                // Atualiza Rule Unique
                 $p = array_map("trim", explode(",", $params));
-                
+
                 $table = $p[0];
 
                 // set field name to rules key ($field) (laravel convention)
@@ -212,8 +208,6 @@ abstract class BaseValidator extends AbstractValidator
 
                 if (isset($p[3]) && !empty($p[3])) {
                     $keyName = $p[3];
-                } elseif($this->keyName) {
-                    $keyName = $this->keyName;
                 } else {
                     $keyName = 'id';
                 }
@@ -222,11 +216,23 @@ abstract class BaseValidator extends AbstractValidator
                     $rule = Rule::unique($table, $field);
                 }
 
-                if ($rule instanceof Unique) {
+                if (!empty($id) || $id == '0') {
                     $rule->where(function ($query) use ($id, $keyName) {
                         $query->orWhere($keyName, '<>', $id);
                         $query->orWhereNull($keyName);
                     });
+                }
+
+                // Extra Conditions
+                if (isset($p[4])) {
+                    $extra = $this->getExtraConditions(array_slice($p, 4));
+                    foreach ($extra as $key => $value) {
+                        if (strtoupper($value) == 'NULL' || is_null($value)) {
+                            $rule->whereNull($key);
+                        } else {
+                            $rule->where($key, $value);
+                        }
+                    }
                 }
 
                 $rules[$ruleIdx] = $rule;
@@ -234,6 +240,25 @@ abstract class BaseValidator extends AbstractValidator
         });
 
         return $rules;
+    }
+
+    /**
+     * Get the extra conditions for a unique / exists rule.
+     *
+     * @param  array  $segments
+     * @return array
+     */
+    protected function getExtraConditions(array $segments)
+    {
+        $extra = [];
+
+        $count = count($segments);
+
+        for ($i = 0; $i < $count; $i += 2) {
+            $extra[$segments[$i]] = isset($segments[$i + 1]) ? $segments[$i + 1] : null;
+        }
+
+        return $extra;
     }
 
     /**
@@ -245,9 +270,18 @@ abstract class BaseValidator extends AbstractValidator
      */
     protected function replaceValuesRules($rule)
     {
+        $x = 0;
         while (preg_match('/\[([A-Za-z0-9_]+)\]/', $rule, $match)) {
-            if (array_key_exists($match[1], $this->data)) {
-                $rule = str_replace("[{$match[1]}]", $this->getValue($match[1]), $rule);
+            $x++;
+            $field = $match[1];
+            $value = 'NULL';
+            if (array_key_exists($field, $this->data)) {
+                $value = $this->getValue($field);
+            }
+
+            $rule = str_replace("[{$field}]", $value, $rule);
+            if ($x>10) {
+                break;
             }
         }
 
@@ -263,10 +297,8 @@ abstract class BaseValidator extends AbstractValidator
      */
     protected function getValue($attribute)
     {
-        if (is_null($value = array_get($this->data, $attribute))) {
-            $value = 'NULL';
-        }
+        $value = array_get($this->data, $attribute);
 
-        return $value;
+        return is_null($value) ? 'NULL' : $value;
     }
 }
