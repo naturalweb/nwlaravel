@@ -21,6 +21,7 @@ class AbstractRepositoryTest extends TestCase
         $this->model = m::mock(Model::class);
         $this->model->shouldReceive('getDates')->andReturn([]);
         $this->model->shouldReceive('getTable')->andReturn('foo');
+        $this->model->shouldReceive('newQuery')->andReturn($this->model);
         $this->app->instance(Model::class, $this->model);
 
         $this->config = m::mock('config');
@@ -344,18 +345,13 @@ class AbstractRepositoryTest extends TestCase
         $this->assertEquals($repo, $repo->random());
     }
 
-    public function testGetQueryWithNewQuery()
+    public function testGetQuery()
     {
         $builder = m::mock(Builder::class);
 
-        $this->model
-            ->shouldReceive('newQuery')
-            ->once()
-            ->andReturn($builder);
-
         $repo = new StubAbstractRepository($this->app);
 
-        $this->assertEquals($builder, $repo->getQuery());
+        $this->assertEquals($this->model, $repo->getQuery());
     }
 
     public function testGetQueryWithBuilder()

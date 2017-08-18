@@ -34,6 +34,16 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
     protected $skipPresenter = true;
 
     /**
+     * @return Model
+     * @throws RepositoryException
+     */
+    public function makeModel()
+    {
+        parent::makeModel();
+        return $this->model = $this->model->newQuery();
+    }
+
+    /**
      * Reset Model
      *
      * @return AbstractRepository
@@ -55,7 +65,7 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
         $this->applyCriteria();
         $this->applyScope();
 
-        return ($this->model instanceof Builder) ? $this->model : $this->model->newQuery();
+        return $this->model;
     }
 
     /**
