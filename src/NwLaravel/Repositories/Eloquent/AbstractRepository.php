@@ -387,7 +387,7 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
             // we should pass data that has been casts by the model
             // to make sure data type are same because validator may need to use
             // this data to compare with data that fetch from database.
-            $model = $this->model->newInstance()->forceFill($attributes);
+            $model = $this->model->newModelInstance()->forceFill($attributes);
             $attributes = array_merge($attributes, $model->toArray());
 
             $validator = $this->validator->with($attributes);
@@ -413,7 +413,7 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
     {
         $this->validar($attributes, ValidatorInterface::RULE_CREATE);
 
-        $model = $this->model->newInstance($attributes);
+        $model = $this->model->newModelInstance($attributes);
         $model->save();
         $this->resetModel();
 
