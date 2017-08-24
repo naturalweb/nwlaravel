@@ -463,7 +463,7 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
     {
         $this->applyCriteria();
         $this->applyScope();
-        
+
         $temporarySkipPresenter = $this->skipPresenter;
         $this->skipPresenter(true);
 
@@ -471,7 +471,8 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
 
         $deleted = $this->model->delete();
 
-        event(new RepositoryEntityDeleted($this, $this->model));
+        $model = $this->model instanceof Builder ? $this->model->getModel() : $this->model;
+        event(new RepositoryEntityDeleted($this, $model));
 
         $this->skipPresenter($temporarySkipPresenter);
         $this->resetModel();
@@ -501,7 +502,8 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
         $this->skipPresenter($temporarySkipPresenter);
         $this->resetModel();
 
-        event(new RepositoryEntityUpdated($this, $this->model));
+        $model = $this->model instanceof Builder ? $this->model->getModel() : $this->model;
+        event(new RepositoryEntityUpdated($this, $model));
 
         return $updated;
     }
