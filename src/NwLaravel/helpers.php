@@ -365,11 +365,7 @@ if (! function_exists('formatDateTimeLong')) {
     function formatDateTimeLong($date)
     {
         if ($date instanceof \DateTime) {
-            $date = sprintf(
-                '%s - %s',
-                dateFormatter($date, \IntlDateFormatter::LONG, \IntlDateFormatter::NONE),
-                dateFormatter($date, \IntlDateFormatter::NONE, \IntlDateFormatter::MEDIUM)
-            );
+            $date = sprintf('%s - %s', formatDateLong($date), formatTime($date));
         }
 
         return $date;
