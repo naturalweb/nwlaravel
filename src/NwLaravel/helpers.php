@@ -257,10 +257,11 @@ if (! function_exists('dateFormatter')) {
      * @param DateTime $date     Date Time
      * @param string   $dateType String Date Type
      * @param string   $timeType String Time Type
+     * @param string   $pattern  String Pattern
      *
      * @return string
      */
-    function dateFormatter($date, $dateType, $timeType)
+    function dateFormatter($date, $dateType, $timeType, $pattern = "")
     {
         if ($date instanceof \DateTime) {
             $fmt = new \IntlDateFormatter(
@@ -268,13 +269,57 @@ if (! function_exists('dateFormatter')) {
                 $dateType,
                 $timeType,
                 config('app.timezone'),
-                \IntlDateFormatter::GREGORIAN
+                \IntlDateFormatter::GREGORIAN,
+                $pattern
             );
 
             return $fmt->format($date);
         }
 
         return $date;
+    }
+}
+
+if (! function_exists('formatPattern')) {
+    /**
+     * Format Pattern
+     *
+     * @param DateTime $date     Date Time
+     * @param string   $pattern  String Pattern
+     *
+     * @return string
+     */
+    function formatPattern($date, $pattern)
+    {
+        if ($date instanceof \DateTime) {
+            $fmt = new \IntlDateFormatter(
+                config('app.locale'),
+                IntlDateFormatter::NONE,
+                IntlDateFormatter::NONE,
+                config('app.timezone'),
+                \IntlDateFormatter::GREGORIAN,
+                $pattern
+            );
+
+            return $fmt->format($date);
+        }
+
+        return "";
+    }
+}
+
+if (! function_exists('nameWeek')) {
+    /**
+     * Return Name Week
+     *
+     * @param DateTime $date Date Time
+     *
+     * @return string
+     * @example : Domingo
+     */
+    function nameWeek($date)
+    {
+        return formatPattern($date, "EEEE");
     }
 }
 
