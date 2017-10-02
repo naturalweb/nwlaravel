@@ -273,6 +273,10 @@ if (! function_exists('dateFormatter')) {
                 $pattern
             );
 
+            if (empty($pattern) && $dateType == \IntlDateFormatter::SHORT) {
+                $fmt->setPattern(preg_replace("/y+/", "yyyy", $fmt->getPattern()));
+            }
+
             return $fmt->format($date);
         }
 
@@ -334,7 +338,7 @@ if (! function_exists('formatDateTime')) {
      */
     function formatDateTime($date)
     {
-        return dateFormatter($date, \IntlDateFormatter::MEDIUM, \IntlDateFormatter::MEDIUM);
+        return dateFormatter($date, \IntlDateFormatter::SHORT, \IntlDateFormatter::MEDIUM);
     }
 }
 
@@ -364,7 +368,7 @@ if (! function_exists('formatDate')) {
      */
     function formatDate($date)
     {
-        return dateFormatter($date, \IntlDateFormatter::MEDIUM, \IntlDateFormatter::NONE);
+        return dateFormatter($date, \IntlDateFormatter::SHORT, \IntlDateFormatter::NONE);
     }
 }
 
@@ -466,7 +470,7 @@ if (! function_exists('formatDateTimeShort')) {
      */
     function formatDateTimeShort($date)
     {
-        return dateFormatter($date, \IntlDateFormatter::MEDIUM, \IntlDateFormatter::SHORT);
+        return dateFormatter($date, \IntlDateFormatter::SHORT, \IntlDateFormatter::SHORT);
     }
 }
 
