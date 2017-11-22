@@ -350,6 +350,8 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
             $anterior->save();
         }
 
+        event(new RepositoryEntityUpdated($this, $model));
+
         return true;
     }
 
