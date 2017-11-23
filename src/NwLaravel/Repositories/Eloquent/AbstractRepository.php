@@ -115,6 +115,21 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
     }
 
     /**
+     * ResultSet
+     *
+     * @param int $limit Integer Limit
+     *
+     * @return BuilderResultset
+     */
+    public function resultset($limit = null)
+    {
+        $query = $this->getQuery()->limit($limit);
+
+        $this->resetModel();
+        return new BuilderResultset($query);
+    }
+
+    /**
      * Get an array with the values of a given column.
      *
      * @param  string $column String Column
