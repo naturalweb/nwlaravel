@@ -57,6 +57,9 @@ class FilterSearch implements FilterInterface
 
                     if (!empty($value)) {
                         $search = in_array($condition, ["like", "ilike"]) ? "%{$value}%" : $value;
+                        if ($field == 'id') {
+                            $search = intval($search);
+                        }
                         $query->orWhere($this->table.'.'.$field, $condition, $search);
                     }
                 }
