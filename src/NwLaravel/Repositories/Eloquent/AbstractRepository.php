@@ -322,6 +322,20 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
     }
 
     /**
+     * Order Top
+     *
+     * @param Model  $model
+     * @param string $field Field Order
+     * @param array  $input Array Where
+     *
+     * @return boolean
+     */
+    public function orderTop($model, $field, array $input = [])
+    {
+        return $this->reorder($model, $field, $input, 'ASC');
+    }
+
+    /**
      * Order Down
      *
      * @param Model  $model
@@ -335,6 +349,20 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
         $input["{$field} >= ?"] = $model->{$field};
         $input["id != ?"] = $model->id;
         return $this->reorder($model, $field, $input, 'ASC');
+    }
+
+    /**
+     * Order Bottom
+     *
+     * @param Model  $model
+     * @param string $field Field Order
+     * @param array  $input Array Where
+     *
+     * @return boolean
+     */
+    public function orderBottom($model, $field, array $input = [])
+    {
+        return $this->reorder($model, $field, $input, 'DESC');
     }
 
     /**
@@ -404,7 +432,7 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
             // we should pass data that has been casts by the model
             // to make sure data type are same because validator may need to use
             // this data to compare with data that fetch from database.
-            $model = $this->model->newModelInstance()->forceFill($attributes);
+            $model = $this->model->newModelInstance()->fill($attributes);
             $attributes = array_merge($attributes, $model->toArray());
 
             $validator = $this->validator->with($attributes);
