@@ -65,7 +65,10 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
         $this->applyCriteria();
         $this->applyScope();
 
-        return $this->model;
+        $model = $this->model;
+
+        $this->resetModel();
+        return $model;
     }
 
     /**
@@ -89,7 +92,6 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
             ->getQuery()
             ->limit($limit);
 
-        $this->resetModel();
         return new BuilderResultset($query);
     }
 
@@ -125,7 +127,6 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
     {
         $query = $this->getQuery()->limit($limit);
 
-        $this->resetModel();
         return new BuilderResultset($query);
     }
 
@@ -139,13 +140,7 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
      */
     public function pluck($column, $key = null)
     {
-        $this->applyCriteria();
-        $this->applyScope();
-
-        $lists = $this->model->pluck($column, $key);
-
-        $this->resetModel();
-        return $lists;
+        return $this->getQuery()->pluck($column, $key);
     }
 
     /**
@@ -210,15 +205,9 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
      */
     public function count(array $input = array())
     {
-        $this->applyCriteria();
-        $this->applyScope();
-        
         $this->whereInputCriteria($input);
-        
-        $count = $this->model->count();
-        
-        $this->resetModel();
-        return $count;
+
+        return $this->getQuery()->count();
     }
     
     /**
@@ -231,15 +220,9 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
      */
     public function max($field, array $input = array())
     {
-        $this->applyCriteria();
-        $this->applyScope();
-    
         $this->whereInputCriteria($input);
-    
-        $max = $this->model->max($field);
-    
-        $this->resetModel();
-        return $max;
+
+        return $this->getQuery()->max($field);
     }
 
     /**
@@ -252,15 +235,9 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
      */
     public function min($field, array $input = array())
     {
-        $this->applyCriteria();
-        $this->applyScope();
-    
         $this->whereInputCriteria($input);
-    
-        $max = $this->model->min($field);
-    
-        $this->resetModel();
-        return $max;
+
+        return $this->getQuery()->min($field);
     }
 
     /**
@@ -273,15 +250,9 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
      */
     public function sum($field, array $input = array())
     {
-        $this->applyCriteria();
-        $this->applyScope();
-    
         $this->whereInputCriteria($input);
-    
-        $max = $this->model->sum($field);
-    
-        $this->resetModel();
-        return $max;
+
+        return $this->getQuery()->sum($field);
     }
 
     /**
@@ -294,15 +265,9 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
      */
     public function avg($field, array $input = array())
     {
-        $this->applyCriteria();
-        $this->applyScope();
-    
         $this->whereInputCriteria($input);
-    
-        $avg = $this->model->avg($field);
-    
-        $this->resetModel();
-        return $avg;
+
+        return $this->getQuery()->avg($field);
     }
 
     /**

@@ -14,8 +14,12 @@ class FilterClosure implements FilterInterface
      */
     public function filter($query, $key, $value)
     {
-        if (is_int($key) && $value instanceof \Closure) {
-            $query = $query->where($value);
+        if ($value instanceof \Closure) {
+            if (is_int($key)) {
+                $query = $query->where($value);
+            } else {
+                $query = $query->whereIn($key, $value);
+            }
             return true;
         }
 
