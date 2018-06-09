@@ -31,6 +31,10 @@ class ImagineFactory
      */
     public function make($path)
     {
-        return new Imagine($path, $this->manager);
+        if (extension_loaded('imagick') && class_exists('Imagick')) {
+            return new ImagineImagick($path, $this->manager);
+        }
+
+        return new ImagineGd($path, $this->manager);
     }
 }
