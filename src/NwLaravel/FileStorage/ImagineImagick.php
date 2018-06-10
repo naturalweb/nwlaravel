@@ -238,7 +238,12 @@ class ImagineImagick implements Imagine
      */
     public function save($path, $quality = null)
     {
-        // $this->image = $this->image->writeImage($path);
+        $quality = intval($quality);
+        if ($quality > 0 && $quality <= 100) {
+            $this->image->setImageCompressionQuality($quality);
+        }
+        $this->image->writeImage($path);
+
         return $this;
     }
 }
