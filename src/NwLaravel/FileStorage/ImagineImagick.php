@@ -59,15 +59,26 @@ class ImagineImagick implements Imagine
     /**
      * Define Resize
      *
-     * @param int     $width
-     * @param int     $height
+     * @param int     $maxWidth
+     * @param int     $maxHeight
      * @param boolean $force
      *
      * @return Imagine
      */
-    public function resize($width, $height, $force = false)
+    public function resize($maxWidth, $maxHeight, $force = false)
     {
-        return $this->execute(function ($image) use ($width, $height, $force) {
+        return $this->execute(function ($image) use ($maxWidth, $maxHeight, $force) {
+            $width = $maxWidth;
+            $height = $maxHeight;
+            $imageWidth = $image->getImageWidth();
+            $imageHeight = $image->getImageHeight();
+            if($imageWidth > $maxWidth || $imageHeight > $maxHeight) {
+                if ($imageWidth > $imageHeight) {
+                    $height = floor(($imageHeight/$imageWidth)*$maxWidth);
+                } else {
+                    $width  = floor(($imageWidth/$imageHeight)*$maxHeight);
+                }
+            }
             $image->scaleImage($width, $height, !$force);
         });
     }
