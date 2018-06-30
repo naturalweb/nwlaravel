@@ -224,14 +224,15 @@ class StorageManager
      * @param string       $folder   String Folder
      * @param string       $name     String Name
      * @param bool         $override Boolean Over Ride
+     * @param array        $config   Array Config Upload
      *
      * @return bool
      */
-    public function uploadFile(UploadedFile $file, $folder = null, $name = null, $override = false)
+    public function uploadFile(UploadedFile $file, $folder = null, $name = null, $override = false, array $config = [])
     {
         $data = $this->parseFile($file, $folder, $name, $override);
 
-        $success = (bool) $this->storage->put($data['filename'], file_get_contents($file));
+        $success = (bool) $this->storage->put($data['filename'], file_get_contents($file), $config);
 
         if ($success) {
             return $data;
@@ -248,6 +249,7 @@ class StorageManager
      * @param string       $name     String Name
      * @param array        $options  Array Options
      * @param bool         $override Boolean Over Ride
+     * @param array        $config  Array Config Upload
      *
      * @return bool
      */
@@ -255,8 +257,9 @@ class StorageManager
         UploadedFile $file,
         $folder = null,
         $name = null,
-        array $options = array(),
-        $override = false
+        array $options = [],
+        $override = false,
+        array $config = []
     ) {
         $pathImage = $file->getPathname();
         $data = $this->parseFile($file, $folder, $name, $override);
@@ -280,7 +283,7 @@ class StorageManager
             $content = file_get_contents($file);
         }
 
-        $success = $this->storage->put($data['filename'], $content);
+        $success = $this->storage->put($data['filename'], $content, $config);
 
         if ($success) {
             return $data;
