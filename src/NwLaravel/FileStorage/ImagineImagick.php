@@ -72,13 +72,20 @@ class ImagineImagick implements Imagine
             $height = $maxHeight;
             $imageWidth = $image->getImageWidth();
             $imageHeight = $image->getImageHeight();
-            if($imageWidth > $maxWidth || $imageHeight > $maxHeight) {
-                if ($imageWidth > $imageHeight) {
-                    $height = floor(($imageHeight/$imageWidth)*$maxWidth);
-                } else {
-                    $width  = floor(($imageWidth/$imageHeight)*$maxHeight);
+
+            if(($maxWidth && $imageWidth > $maxWidth) || !$maxHeight) {
+                $height = floor(($imageHeight/$imageWidth)*$maxWidth);
+                if (!$height) {
+                    $height = $imageHeight;
+                }
+
+            } else if(($maxHeight && $imageHeight > $maxHeight) || !$maxWidth) {
+                $width = floor(($imageWidth/$imageHeight)*$maxHeight);
+                if (!$width) {
+                    $width = $imageWidth;
                 }
             }
+
             $image->scaleImage($width, $height, !$force);
         });
     }
