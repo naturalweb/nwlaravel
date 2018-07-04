@@ -145,7 +145,7 @@ trait CacheableRepository
         $bindings = serialize($this->model->getBindings());
         $skipPresenter = $this->skipPresenter ? '-skipPresenter-' : '';
         
-        return sprintf('%s@%s-%s', get_called_class(), $method, md5($args . $criteria . $skipPresenter . $request->fullUrl()));
+        return sprintf('%s@%s-%s', get_called_class(), $method, md5($args . $criteria . $bindings . $skipPresenter . $request->fullUrl()));
     }
 
     /**
