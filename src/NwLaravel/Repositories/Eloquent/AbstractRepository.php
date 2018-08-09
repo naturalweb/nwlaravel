@@ -519,6 +519,60 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
     }
 
     /**
+     * Add a subquery join clause to the query.
+     *
+     * @param  \Closure|\Illuminate\Database\Query\Builder|string $query
+     * @param  string  $as
+     * @param  string  $first
+     * @param  string|null  $operator
+     * @param  string|null  $second
+     * @param  string  $type
+     * @param  bool    $where
+     * @return \Illuminate\Database\Query\Builder|static
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function joinSub($query, $as, $first, $operator = null, $second = null, $type = 'inner', $where = false)
+    {
+        $sql = $query->toSql();
+        $bindings = $query->getBindings();
+        $expression = '('.$sql.') as '.$this->model->getGrammar()->wrap($as);
+        $this->model->addBinding($bindings, 'join');
+
+        return $this->join(new Expression($expression), $first, $operator, $second, $type, $where);
+    }
+
+    /**
+     * Add a subquery left join to the query.
+     *
+     * @param  \Closure|\Illuminate\Database\Query\Builder|string $query
+     * @param  string  $as
+     * @param  string  $first
+     * @param  string|null  $operator
+     * @param  string|null  $second
+     * @return \Illuminate\Database\Query\Builder|static
+     */
+    public function leftJoinSub($query, $as, $first, $operator = null, $second = null)
+    {
+        return $this->joinSub($query, $as, $first, $operator, $second, 'left');
+    }
+
+    /**
+     * Add a subquery right join to the query.
+     *
+     * @param  \Closure|\Illuminate\Database\Query\Builder|string $query
+     * @param  string  $as
+     * @param  string  $first
+     * @param  string|null  $operator
+     * @param  string|null  $second
+     * @return \Illuminate\Database\Query\Builder|static
+     */
+    public function rightJoinSub($query, $as, $first, $operator = null, $second = null)
+    {
+        return $this->joinSub($query, $as, $first, $operator, $second, 'right');
+    }
+
+    /**
      * Handle dynamic method calls into the method.
      *
      * @param  string  $method

@@ -217,10 +217,7 @@ abstract class BaseValidator extends AbstractValidator
                 }
 
                 if (!empty($id) || $id == '0') {
-                    $rule->where(function ($query) use ($id, $keyName) {
-                        $query->orWhere($keyName, '<>', $id);
-                        $query->orWhereNull($keyName);
-                    });
+                    $rule->ignore($id, $keyName);
                 }
 
                 // Extra Conditions
