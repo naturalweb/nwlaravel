@@ -177,30 +177,6 @@ class StorageManager
     }
 
     /**
-     * Move a file to a new location.
-     *
-     * @param  string  $from
-     * @param  string  $to
-     * @return bool
-     */
-    public function move($from, $to)
-    {
-        return $this->storage->move($from, $to);
-    }
-
-    /**
-     * Copy a file to a new location.
-     *
-     * @param  string  $from
-     * @param  string  $to
-     * @return bool
-     */
-    public function copy($from, $to)
-    {
-        return $this->storage->copy($from, $to);
-    }
-
-    /**
      * Files in Folder
      *
      * @param string $path
@@ -329,5 +305,17 @@ class StorageManager
         } while (!$override && $this->storage->exists($filename));
 
         return compact('filename', 'name', 'extension', 'size', 'mime');
+    }
+
+    /**
+     * Dynamically handle calls into the query instance.
+     *
+     * @param  string  $method
+     * @param  array  $parameters
+     * @return mixed
+     */
+    public function __call($method, $parameters)
+    {
+        return $this->storage->{$method}(...$parameters);
     }
 }

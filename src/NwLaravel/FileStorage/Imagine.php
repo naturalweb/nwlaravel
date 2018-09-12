@@ -52,6 +52,15 @@ interface Imagine
     public function crop($width, $height, $x, $y);
 
     /**
+     * Rotate Image
+     *
+     * @param integer $angle
+     *
+     * @return binary
+     */
+    public function rotate($angle);
+
+    /**
      * Encode
      *
      * @param string  $format

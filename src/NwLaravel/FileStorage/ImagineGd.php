@@ -138,6 +138,24 @@ class ImagineGd implements Imagine
     }
 
     /**
+     * Rotate Image
+     *
+     * @param integer $angle
+     *
+     * @return binary
+     */
+    public function rotate($angle)
+    {
+        $angle = intval($angle);
+
+        if ($angle > -360 && $angle < 360) {
+            $this->image->rotate($angle);
+        }
+
+        return $this;
+    }
+
+    /**
      * Is Image
      *
      * @param string $path

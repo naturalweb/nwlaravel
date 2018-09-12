@@ -3,6 +3,7 @@
 namespace NwLaravel\FileStorage;
 
 use Imagick;
+use ImagickPixel;
 
 class ImagineImagick implements Imagine
 {
@@ -231,6 +232,26 @@ class ImagineImagick implements Imagine
         return $this->execute(function ($image) use ($width, $height, $x, $y) {
             $image->cropImage($width, $height, $x, $y);
         });
+    }
+
+    /**
+     * Rotate Image
+     *
+     * @param integer $angle
+     *
+     * @return binary
+     */
+    public function rotate($angle)
+    {
+        $angle = intval($angle);
+
+        if ($angle > -360 && $angle < 360) {
+            $this->execute(function ($image) use ($angle) {
+                $image->rotateImage('#ffffff', $angle);
+            });
+        }
+
+        return $this;
     }
 
     /**
