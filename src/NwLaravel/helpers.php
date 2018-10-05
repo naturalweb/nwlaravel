@@ -267,7 +267,7 @@ if (! function_exists('dateFormatter')) {
             $fmt = new \IntlDateFormatter(
                 config('app.locale'),
                 $dateType,
-                $timeType,
+                \IntlDateFormatter::NONE,
                 config('app.timezone'),
                 \IntlDateFormatter::GREGORIAN,
                 $pattern
