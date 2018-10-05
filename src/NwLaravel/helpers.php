@@ -277,7 +277,20 @@ if (! function_exists('dateFormatter')) {
                 $fmt->setPattern(preg_replace("/y+/", "yyyy", $fmt->getPattern()));
             }
 
-            return $fmt->format($date);
+            $strDate = $fmt->format($date);
+            $strTime = '';
+
+            switch ($timeType) {
+                case \IntlDateFormatter::SHORT:
+                    $strTime = $date->format('H:i');
+                    break;
+                case \IntlDateFormatter::MEDIUM:
+                    $strTime = $date->format('H:i:s');
+                    break;
+            }
+
+            return trim(sprintf('%s %s', $strDate, $strTime));
+            // return $fmt->format($date);
         }
 
         return $date;
