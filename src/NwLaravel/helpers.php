@@ -277,7 +277,7 @@ if (! function_exists('dateFormatter')) {
                 $fmt->setPattern(preg_replace("/y+/", "yyyy", $fmt->getPattern()));
             }
 
-            $strDate = $fmt->format($date);
+            $strDate = ($dateType != \IntlDateFormatter::NONE) ? $fmt->format($date) : '';
             $strTime = '';
 
             switch ($timeType) {
@@ -290,7 +290,6 @@ if (! function_exists('dateFormatter')) {
             }
 
             return trim(sprintf('%s %s', $strDate, $strTime));
-            // return $fmt->format($date);
         }
 
         return $date;
