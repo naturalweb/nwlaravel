@@ -156,6 +156,19 @@ class ImagineGd implements Imagine
     }
 
     /**
+     * Strip Profiles
+     *
+     * @param string $except
+     *
+     * @return this
+     * @todo Pendente para Criaçãio
+     */
+    public function stripProfiles()
+    {
+        return $this;
+    }
+
+    /**
      * Is Image
      *
      * @param string $path

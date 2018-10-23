@@ -61,6 +61,15 @@ interface Imagine
     public function rotate($angle);
 
     /**
+     * Strip Profiles
+     *
+     * @param string $except
+     *
+     * @return this
+     */
+    public function stripProfiles();
+
+    /**
      * Encode
      *
      * @param string  $format

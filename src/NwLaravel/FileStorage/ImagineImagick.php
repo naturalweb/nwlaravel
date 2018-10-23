@@ -255,6 +255,25 @@ class ImagineImagick implements Imagine
     }
 
     /**
+     * Strip Profiles
+     *
+     * @param string $except
+     *
+     * @return this
+     */
+    public function stripProfiles()
+    {
+        $profiles = $this->image->getImageProfiles('icc', true);
+
+        $this->image->stripImage();
+
+        if(!empty($profiles))
+            $this->image->profileImage('icc', $profiles['icc']);
+
+        return $this;
+    }
+
+    /**
      * Encode
      *
      * @param string  $format

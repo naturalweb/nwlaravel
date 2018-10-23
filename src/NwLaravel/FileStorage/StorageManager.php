@@ -249,6 +249,7 @@ class StorageManager
             $quality = isset($options['quality']) ? intval($options['quality']) : 85; // Quality Deufault: 85;
 
             $imagine = $this->imagineFactory->make($pathImage);
+            $imagine->stripProfiles();
             $imagine->resize($width, $height, !$scale);
             $imagine->opacity($opacity);
             $imagine->watermark($watermark);
