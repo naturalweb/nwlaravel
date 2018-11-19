@@ -245,12 +245,13 @@ trait CacheableRepository
     /**
      * Retrieve all data of repository, paginated
      *
-     * @param null  $limit
+     * @param null $limit
      * @param array $columns
+     * @param string $method
      *
      * @return mixed
      */
-    public function paginate($limit = null, $columns = ['*'])
+    public function paginate($limit = null, $columns = ['*'], $method = "paginate")
     {
         return $this->callCache(__FUNCTION__, func_get_args());
     }
