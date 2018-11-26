@@ -106,6 +106,10 @@ class FilterWhere implements FilterInterface
                 return true;
             }
 
+            if (preg_match('/\.id$/', $key)) {
+                $value = intval($value);
+            }
+
             // Busca Direta
             $query = $query->where($key, $operator, $value);
 
