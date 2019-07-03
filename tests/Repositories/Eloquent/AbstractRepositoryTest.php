@@ -380,7 +380,7 @@ class AbstractRepositoryTest extends TestCase
         $validator->shouldReceive('passesOrFail')->with(ValidatorInterface::RULE_CREATE);
 
         $modelValid = m::mock(Model::class);
-        $modelValid->shouldReceive('forceFill')->once()->with($input)->andReturn($modelValid);
+        $modelValid->shouldReceive('fill')->once()->with($input)->andReturn($modelValid);
         $modelValid->shouldReceive('toArray')->once()->andReturn($toArray);
         $modelValid->shouldReceive('save')->once();
         $this->model->shouldReceive('newModelInstance')->twice()->ordered()->andReturn($modelValid);
@@ -408,7 +408,7 @@ class AbstractRepositoryTest extends TestCase
         $validator->shouldReceive('passesOrFail')->with(ValidatorInterface::RULE_UPDATE);
 
         $modelValid = m::mock(Model::class);
-        $modelValid->shouldReceive('forceFill')->once()->with($input)->andReturn($modelValid);
+        $modelValid->shouldReceive('fill')->once()->with($input)->andReturn($modelValid);
         $modelValid->shouldReceive('toArray')->once()->andReturn($toArray);
         $this->model->shouldReceive('newModelInstance')->once()->ordered()->andReturn($modelValid);
 

@@ -165,7 +165,6 @@ class HelpersTest extends TestCase
         $this->config->shouldReceive('get')->with('app.locale', null)->andReturn('pt_BR');
 
         $this->assertEquals('1.234,500', formatNumber(1234.5, 3));
-        $this->assertEquals('R$4.321,00', formatCurrency(4321));
     }
 
     public function testHelpersDateFormatters()
