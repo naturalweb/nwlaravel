@@ -463,6 +463,33 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
     }
 
     /**
+     * Delete Force a entity in repository by id
+     *
+     * @param $id
+     *
+     * @return int
+     */
+    public function deleteForce($id)
+    {
+        $this->applyScope();
+
+        $temporarySkipPresenter = $this->skipPresenter;
+        $this->skipPresenter(true);
+
+        $model = $this->find($id);
+        $originalModel = clone $model;
+
+        $this->skipPresenter($temporarySkipPresenter);
+        $this->resetModel();
+
+        $deleted = $model->deleteForce();
+
+        event(new RepositoryEntityDeleted($this, $originalModel));
+
+        return $deleted;
+    }
+
+    /**
      * Delete multiple entities by given criteria.
      *
      * @param array $where
