@@ -15,11 +15,17 @@ class ImagineImagick implements Imagine
     /**
      * Construct
      *
-     * @param string $path
+     * @param string|blob $path
      */
     public function __construct($path)
     {
-        $this->image = new Imagick($path);
+        if (!file_exists($path)) {
+            $im = new Imagick();
+            $im->pingImageBlob($path);
+            $this->image = $im;
+        } else {
+            $this->image = new Imagick($path);
+        }
     }
 
     /**

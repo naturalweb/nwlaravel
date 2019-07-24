@@ -137,7 +137,7 @@ class StorageManager
      *
      * @param string $filename Path File
      *
-     * @return bool
+     * @return string
      */
     public function readFile($filename)
     {
@@ -306,6 +306,41 @@ class StorageManager
         } while (!$override && $this->storage->exists($filename));
 
         return compact('filename', 'name', 'extension', 'size', 'mime');
+    }
+
+    /**
+     * Crop Image
+     *
+     * @param string $filename
+     * @param int    $x
+     * @param int    $y
+     * @param int    $width
+     * @param int    $height
+     *
+     * @return bool
+     */
+    public function crop(
+        $filename,
+        $width,
+        $height,
+        $x,
+        $y,
+        $target = null
+    ) {
+        if (!$this->imagineFactory) {
+            return false;
+        }
+
+        $image = $this->storage->get($filename);
+        $imagine = $this->imagineFactory->make($image);
+        $imagine->crop($width, $height, $x, $y);
+        $content = $imagine->encode();
+
+        if (!$target) {
+            $target = $filename;
+        }
+
+        return $this->storage->put($target, $content);
     }
 
     /**
