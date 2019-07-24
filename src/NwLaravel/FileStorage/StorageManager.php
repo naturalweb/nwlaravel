@@ -312,14 +312,14 @@ class StorageManager
      * Crop Image
      *
      * @param string $filename
-     * @param int    $x
-     * @param int    $y
      * @param int    $width
      * @param int    $height
+     * @param int    $x
+     * @param int    $y
      *
      * @return bool
      */
-    public function crop(
+    public function cropImage(
         $filename,
         $width,
         $height,

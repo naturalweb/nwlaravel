@@ -15,17 +15,33 @@ class ImagineImagick implements Imagine
     /**
      * Construct
      *
-     * @param string|blob $path
+     * @param string|blob $data
      */
-    public function __construct($path)
+    public function __construct($data)
     {
-        if (!file_exists($path)) {
-            $im = new Imagick();
-            $im->pingImageBlob($path);
-            $this->image = $im;
+        if ($this->isBinary($data)) {
+            $pathTmp = tempnam(sys_get_temp_dir(), 'img');
+            file_put_contents($pathTmp, $data);
+            $this->image = new Imagick($pathTmp);
+            @unlink($pathTmp);
         } else {
-            $this->image = new Imagick($path);
+            $this->image = new Imagick($data);
         }
+    }
+
+    /**
+     * Determines if current source data is binary data
+     *
+     * @return boolean
+     */
+    protected function isBinary($data)
+    {
+        if (is_string($data)) {
+            $mime = finfo_buffer(finfo_open(FILEINFO_MIME_TYPE), $data);
+            return (substr($mime, 0, 4) != 'text' && $mime != 'application/x-empty');
+        }
+
+        return false;
     }
 
     /**
