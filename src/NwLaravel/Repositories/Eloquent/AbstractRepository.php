@@ -195,21 +195,22 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
 
         return $this;
     }
-    
+
     /**
-     * Count
+     * Count results of repository
      *
-     * @param array $input Array Input
+     * @param array $where
+     * @param string $columns
      *
      * @return int
      */
-    public function count(array $input = array())
+    public function count(array $where = [], $columns = '*')
     {
-        $this->whereInputCriteria($input);
+        $this->whereInputCriteria($where);
 
-        return $this->getQuery()->count();
+        return $this->getQuery()->count($columns);
     }
-    
+
     /**
      * Max
      *
