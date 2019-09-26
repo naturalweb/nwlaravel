@@ -134,17 +134,19 @@ class ImagineImagick implements Imagine
     /**
      * Watermark
      *
-     * @param string  $path
+     * @param string  $watermark
      * @param string  $position
      * @param integer $opacity
      *
      * @return Imagine
      */
-    public function watermark($path, $position = 'center', $opacity = null)
+    public function watermark($watermark, $position = 'center', $opacity = null)
     {
-        if ($this->isImage($path)) {
-            $watermark = new \Imagick($path);
+        if ($this->isImage($watermark)) {
+            $watermark = new Imagick($watermark);
+        }
 
+        if ($watermark instanceof Imagick) {
             $opacity = intval($opacity);
             if ($opacity > 0 && $opacity < 100) {
                 $watermark->setImageOpacity($opacity/100);

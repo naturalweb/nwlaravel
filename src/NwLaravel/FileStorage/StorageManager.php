@@ -3,6 +3,7 @@
 namespace NwLaravel\FileStorage;
 
 use \Exception;
+use \RuntimeException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Illuminate\Contracts\Filesystem\Filesystem as Storage;
 use Intervention\Image\Image;
@@ -196,7 +197,7 @@ class StorageManager
     /**
      * UploadFile
      *
-     * @param UploadedFile $file     Uploaded File
+     * @param UploadedFile|string $file     Uploaded File
      * @param string       $folder   String Folder
      * @param string       $name     String Name
      * @param bool         $override Boolean Over Ride
@@ -230,14 +231,21 @@ class StorageManager
      * @return bool
      */
     public function uploadImage(
-        UploadedFile $file,
+        $file,
         $folder = null,
         $name = null,
         array $options = [],
         $override = false,
         array $config = []
     ) {
-        $pathImage = $file->getPathname();
+        if ($file instanceof UploadedFile) {
+            $pathImage = $file->getPathname();
+        } elseif (file_exists($file)) {
+            $pathImage = $file;
+        } else {
+            throw new RuntimeException("File invalid");
+        }
+
         $data = $this->parseFile($file, $folder, $name, $override);
 
         if ($this->imagineFactory) {
@@ -272,7 +280,7 @@ class StorageManager
     /**
      * Parse Filename
      *
-     * @param UploadedFile $file     Uploaded File
+     * @param UploadedFile|string $file     Uploaded File
      * @param string       $name     String Name
      * @param string       $folder   String Folder
      * @param bool         $override Boolean Over Ride
@@ -285,15 +293,25 @@ class StorageManager
         $folder = $folder ? "{$folder}/" : "";
         $this->storage->makeDirectory($folder);
 
-        $name = $name ?: $file->getClientOriginalName();
+        if ($file instanceof UploadedFile) {
+            $clientOriginalName = $file->getClientOriginalName();
+            $extension = $file->getClientOriginalExtension();
+            $size = $file->getClientSize();
+            $mime = $file->getClientMimeType();
+        } else {
+            $info = pathinfo($file);
+            $clientOriginalName = $info['basename'];
+            $extension = $info['extension'];
+            $size = filesize($file);
+            $mime = mime_content_type($file);
+        }
+
+        $name = $name ?: $clientOriginalName;
         $nameOriginal = str_slug(pathinfo($name, PATHINFO_FILENAME));
 
         if (empty($nameOriginal)) {
             $nameOriginal = str_random(10);
         }
-        $extension = $file->getClientOriginalExtension();
-        $size = $file->getClientSize();
-        $mime = $file->getClientMimeType();
 
         $sufix = '';
         $count = 1;
@@ -334,13 +352,53 @@ class StorageManager
         $image = $this->storage->get($filename);
         $imagine = $this->imagineFactory->make($image);
         $imagine->crop($width, $height, $x, $y);
-        $content = $imagine->encode();
 
         if (!$target) {
             $target = $filename;
         }
 
-        return $this->storage->put($target, $content);
+        return $this->storage->put($target, $imagine->encode());
+    }
+
+    /**
+     * Watermark Image
+     *
+     * @param string $filename
+     * @param int    $width
+     * @param int    $height
+     * @param int    $x
+     * @param int    $y
+     *
+     * @return bool
+     */
+    public function watermarkImage(
+        $filename,
+        $watermark,
+        $position = 'center',
+        $opacity = null,
+        $target = null
+    ) {
+        if (!$this->imagineFactory) {
+            return false;
+        }
+
+        $filename = $bemArquivo->file;
+
+        $pathTmp = tempnam(sys_get_temp_dir(), $name);
+        file_put_contents($pathTmp, $this->storage->get($filename));
+        $imagine = $this->imagineFactory->make($pathTmp);
+        @unlink($pathTmp);
+
+        // Se o watermark existe
+        if (file_exists($watermark)) {
+            $imagine->watermark($watermark, $position, $opacity);
+        }
+
+        if (!$target) {
+            $target = $filename;
+        }
+
+        return $this->storage->put($target, $imagine->encode());
     }
 
     /**
