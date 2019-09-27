@@ -199,7 +199,7 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
     /**
      * Count results of repository
      *
-     * @param array $where
+     * @param array  $where
      * @param string $columns
      *
      * @return int

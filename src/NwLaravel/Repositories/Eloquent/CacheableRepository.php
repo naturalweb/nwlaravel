@@ -322,13 +322,14 @@ trait CacheableRepository
     }
 
     /**
-     * Count
+     * Count results of repository
      *
-     * @param array $input Array Input
+     * @param array  $where
+     * @param string $columns
      *
      * @return int
      */
-    public function count(array $input = array())
+    public function count(array $where = [], $columns = '*')
     {
         return $this->callCache(__FUNCTION__, func_get_args());
     }
