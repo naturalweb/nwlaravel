@@ -205,7 +205,7 @@ class StorageManager
      *
      * @return bool
      */
-    public function uploadFile(UploadedFile $file, $folder = null, $name = null, $override = false, array $config = [])
+    public function uploadFile($file, $folder = null, $name = null, $override = false, array $config = [])
     {
         $data = $this->parseFile($file, $folder, $name, $override);
 
@@ -238,17 +238,15 @@ class StorageManager
         $override = false,
         array $config = []
     ) {
-        if ($file instanceof UploadedFile) {
-            $pathImage = $file->getPathname();
-        } elseif (file_exists($file)) {
-            $pathImage = $file;
-        } else {
-            throw new RuntimeException("File invalid");
-        }
-
         $data = $this->parseFile($file, $folder, $name, $override);
 
         if ($this->imagineFactory) {
+            if ($file instanceof UploadedFile) {
+                $pathImage = $file->getPathname();
+            } else {
+                $pathImage = $file;
+            }
+
             $width = isset($options['width']) ? intval($options['width']) : 0;
             $height = isset($options['height']) ? intval($options['height']) : 0;
             $scale = isset($options['scale']) ? (bool) $options['scale'] : true;
@@ -261,7 +259,7 @@ class StorageManager
             $imagine->resize($width, $height, !$scale);
             $imagine->opacity($opacity);
             $imagine->watermark($watermark);
-            $imagine = $imagine->save($pathImage.'.'.$data['extension'], $quality);
+            // $imagine = $imagine->save($pathImage.'.'.$data['extension'], $quality);
             $data['size'] = $imagine->filesize();
             $content = $imagine->encode();
         } else {
@@ -289,6 +287,10 @@ class StorageManager
      */
     protected function parseFile($file, $folder = null, $name = null, $override = false)
     {
+        if (!$file instanceof UploadedFile || !file_exists($file)) {
+            throw new RuntimeException("File invalid");
+        }
+
         $folder = trim((string) $folder, '/');
         $folder = $folder ? "{$folder}/" : "";
         $this->storage->makeDirectory($folder);
@@ -300,7 +302,7 @@ class StorageManager
             $mime = $file->getClientMimeType();
         } else {
             $info = pathinfo($file);
-            $clientOriginalName = $info['basename'];
+            $clientOriginalName = $info['filename'];
             $extension = $info['extension'];
             $size = filesize($file);
             $mime = mime_content_type($file);
