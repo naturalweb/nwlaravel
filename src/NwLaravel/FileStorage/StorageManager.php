@@ -287,7 +287,7 @@ class StorageManager
      */
     protected function parseFile($file, $folder = null, $name = null, $override = false)
     {
-        if (!$file instanceof UploadedFile || !file_exists($file)) {
+        if (!$file instanceof UploadedFile && !file_exists($file)) {
             throw new RuntimeException("File invalid");
         }
 
