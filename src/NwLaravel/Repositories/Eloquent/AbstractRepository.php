@@ -483,7 +483,7 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
         $this->skipPresenter($temporarySkipPresenter);
         $this->resetModel();
 
-        $deleted = $model->deleteForce();
+        $deleted = $model->forceDelete();
 
         event(new RepositoryEntityDeleted($this, $originalModel));
 
