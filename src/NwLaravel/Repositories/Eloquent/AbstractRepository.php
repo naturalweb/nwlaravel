@@ -380,7 +380,7 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
 
         return $this;
     }
-    
+
     /**
      * Validar
      *
@@ -612,7 +612,7 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
      */
     public function __call($method, $parameters)
     {
-        $pattern = '/^(((where|orWhere).*)|select|limit|groupBy|join|leftJoin|rightJoin|crossJoin)$/';
+        $pattern = '/^(((where|orWhere).*)|select|limit|groupBy|join|leftJoin|rightJoin|crossJoin|withTrashed|withoutTrashed|onlyTrashed)$/';
         if (preg_match($pattern, $method)) {
             $this->model = call_user_func_array([$this->model, $method], $parameters);
             return $this;
