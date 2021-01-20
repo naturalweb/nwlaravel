@@ -277,9 +277,7 @@ if (! function_exists('dateFormatter')) {
                 $fmt->setPattern(preg_replace("/y+/", "yyyy", $fmt->getPattern()));
             }
 
-            $strDate = ($dateType != \IntlDateFormatter::NONE) ? $fmt->format($date) : '';
             $strTime = '';
-
             switch ($timeType) {
                 case \IntlDateFormatter::SHORT:
                     $strTime = $date->format('H:i');
@@ -288,6 +286,10 @@ if (! function_exists('dateFormatter')) {
                     $strTime = $date->format('H:i:s');
                     break;
             }
+
+            $newDate = clone $date;
+            $newDate->setTime(0, 0);
+            $strDate = ($dateType != \IntlDateFormatter::NONE) ? $fmt->format($newDate) : '';
 
             return trim(sprintf('%s %s', $strDate, $strTime));
         }
@@ -742,7 +744,7 @@ if (! function_exists('numberLetra')) {
 
             return numberLetra($num, $letras, $nivel);
         }
-        
+
         $index = $num-1;
         if (array_key_exists($index, $letras)) {
             $return = $letras[$index];
