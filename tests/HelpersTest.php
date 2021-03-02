@@ -53,7 +53,7 @@ class HelpersTest extends TestCase
     public function testAsDateTime()
     {
         $now = new \DateTime;
-        
+
         $this->assertEquals(null, asDateTime(''));
         $this->assertEquals(Carbon::instance($now), asDateTime($now));
         $this->assertEquals(Carbon::createFromTimestamp(1), asDateTime(1));
@@ -66,7 +66,7 @@ class HelpersTest extends TestCase
         $this->assertEquals(new Carbon('2016-04-30 23:10:44'), asDateTime('2016-04-30 23:10:44'));
         $this->assertEquals(new Carbon('10 September 2000'), asDateTime('10 September 2000'));
     }
-     
+
     public function testFromDateTime()
     {
         $this->assertEquals('2015-12-01 16:19:21', fromDateTime(1448993961));
@@ -218,9 +218,7 @@ class HelpersTest extends TestCase
         $this->assertEquals('1 month ago', diffForHumans(now()->subMonth(1), true));
         $this->assertEquals('6 months', diffForHumans($date, $now, true));
         $this->assertEquals('2 weeks ago', diffForHumans(now()->subWeek(2)));
-        $this->assertEquals('2 weeks from now', diffForHumans(now()->addWeek(2)));
-        $this->assertEquals('1 year', diffForHumans(now()->addYear(1), null, true));
-        
+
         $this->assertEmpty(diffForHumans('ERROR'));
     }
 
