@@ -231,10 +231,12 @@ if (! function_exists('storageFormat')) {
         $sizes = ['KB' => 1, 'MB' => 2, 'GB' => 3, 'TB' => 4, 'PB' => 5];
 
         if (!is_null($nivel) && array_key_exists(strtoupper($nivel), $sizes)) {
-            $multi = 1024*pow(1000, $sizes[strtoupper($nivel)]);
-            $storage = $storage * $multi;
-            if ($storage >= $multi) {
-                $storage = $storage / 1024;
+            if ($storage < 1000) {
+                return toFixed($storage, 1) . strtoupper($nivel);
+            }
+
+            for ($i = 0; $i < $sizes[strtoupper($nivel)]; $i++) {
+                $storage = $storage * 1024;
             }
         }
 
@@ -246,7 +248,7 @@ if (! function_exists('storageFormat')) {
             }
         }
 
-        return toFixed($storage, 1).$sufix;
+        return toFixed($storage, 1) . $sufix;
     }
 }
 
