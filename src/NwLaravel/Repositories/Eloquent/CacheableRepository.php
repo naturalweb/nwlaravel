@@ -144,8 +144,12 @@ trait CacheableRepository
         $sql = $this->model->toSql();
         $bindings = serialize($this->model->getBindings());
         $skipPresenter = $this->skipPresenter ? '-skipPresenter-' : '';
-        
-        return sprintf('%s@%s-%s', get_called_class(), $method, md5($args . $criteria . $bindings . $skipPresenter . $request->fullUrl()));
+        $url = '';
+        if ($method == 'paginate' || $method == 'search') {
+            $url = $request->fullUrl();
+        }
+
+        return sprintf('%s@%s-%s', get_called_class(), $method, md5($args . $criteria . $bindings . $skipPresenter . $url));
     }
 
     /**
