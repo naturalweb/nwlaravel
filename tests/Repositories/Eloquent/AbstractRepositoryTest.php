@@ -193,7 +193,7 @@ class AbstractRepositoryTest extends TestCase
         $this->model
             ->shouldReceive('count')
             ->once()
-            ->withNoArgs()
+            ->withAnyArgs()
             ->andReturn(33);
 
         $input = ['foo', 'bar' => 'baz'];

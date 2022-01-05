@@ -125,7 +125,6 @@ class ValidatorResolverTest extends TestCase
             
         return [
             ['Alnum',       'abc 123 [',    ['[']],
-            ['Alpha',       'abc }',        ['}']],
             ['Age',         '1998-06-21',   ['18', '50']],
             ['PostalCode',  '02179-000',    ['BR']],
             ['Roman',       'XLIX',         []],
