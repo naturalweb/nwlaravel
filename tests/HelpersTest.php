@@ -183,6 +183,8 @@ class HelpersTest extends TestCase
         $this->assertEquals('29/09/2015', formatDate($date));
         $this->assertEquals('13:20:10', formatTime($date));
         $this->assertEquals('13:20', formatTimeShort($date));
+        $this->assertEquals('terça-feira', nameWeek($date));
+        $this->assertEquals('setembro', nameMonth($date));
     }
 
     public function testDateFormatter()

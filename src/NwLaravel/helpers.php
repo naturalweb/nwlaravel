@@ -266,6 +266,15 @@ if (! function_exists('dateFormatter')) {
     function dateFormatter($date, $dateType, $timeType, $pattern = "")
     {
         if ($date instanceof \DateTime) {
+
+            if (!empty($pattern) && $timeType == \IntlDateFormatter::NONE && config('app.locale') == 'pt_BR') {
+                if ($dateType == \IntlDateFormatter::LONG) {
+                    $pattern = "dd 'de' MMMM 'de' yyyy";
+                } else if ($dateType == \IntlDateFormatter::FULL) {
+                    $pattern = "EEEE, dd 'de' MMMM 'de' yyyy";
+                }
+            }
+
             $fmt = new \IntlDateFormatter(
                 config('app.locale'),
                 $dateType,
@@ -328,6 +337,21 @@ if (! function_exists('formatPattern')) {
     }
 }
 
+if (! function_exists('nameMonth')) {
+    /**
+     * Return Name Month
+     *
+     * @param DateTime $date Date Time
+     *
+     * @return string
+     * @example : janeiro
+     */
+    function nameMonth($date)
+    {
+        return formatPattern($date, "MMMM");
+    }
+}
+
 if (! function_exists('nameWeek')) {
     /**
      * Return Name Week
@@ -335,7 +359,7 @@ if (! function_exists('nameWeek')) {
      * @param DateTime $date Date Time
      *
      * @return string
-     * @example : Domingo
+     * @example : domingo
      */
     function nameWeek($date)
     {
