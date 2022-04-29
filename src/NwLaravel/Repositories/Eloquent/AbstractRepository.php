@@ -612,7 +612,7 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
      */
     public function __call($method, $parameters)
     {
-        $pattern = '/^(((where|orWhere).*)|with|without|select|limit|offset|groupBy|inRandomOrder|orderByRaw|union|join|leftJoin|rightJoin|crossJoin|withTrashed|withoutTrashed|onlyTrashed)$/';
+        $pattern = '/^(((where|orWhere).*)|with|without|select|limit|offset|forPage|groupBy|inRandomOrder|orderByRaw|union|join|leftJoin|rightJoin|crossJoin|withTrashed|withoutTrashed|onlyTrashed)$/';
         if (preg_match($pattern, $method)) {
             $this->model = call_user_func_array([$this->model, $method], $parameters);
             return $this;
