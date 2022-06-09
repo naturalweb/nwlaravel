@@ -61,7 +61,7 @@ class FilterSearch implements FilterInterface
                             $search = trim($search);
                             if (strlen($search) > 9) {
                                 // Caso seja maior de 9 digitos
-                                break;
+                                continue;
                             }
                             $search = intval($search);
                         }
