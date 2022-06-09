@@ -58,6 +58,11 @@ class FilterSearch implements FilterInterface
                     if (!empty($value)) {
                         $search = in_array($condition, ["like", "ilike"]) ? "%{$value}%" : $value;
                         if ($field == 'id') {
+                            $search = trim($search);
+                            if (strlen($search) > 9) {
+                                // Caso seja maior de 9 digitos
+                                break;
+                            }
                             $search = intval($search);
                         }
                         $query->orWhere($this->table.'.'.$field, $condition, $search);
