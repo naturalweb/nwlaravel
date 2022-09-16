@@ -144,6 +144,24 @@ abstract class AbstractRepository extends BaseRepository implements RepositoryIn
     }
 
     /**
+     * Find data by id
+     *
+     * @param       $id
+     * @param array $columns
+     *
+     * @return mixed
+     */
+    public function findOrFail($id, $columns = ['*'])
+    {
+        $this->applyCriteria();
+        $this->applyScope();
+        $model = $this->model->findOrFail($id, $columns);
+        $this->resetModel();
+
+        return $this->parserResult($model);
+    }
+
+    /**
      * Add an "order by" clause to the query.
      *
      * @param  string $columns   String Columns

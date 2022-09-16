@@ -286,6 +286,19 @@ trait CacheableRepository
     }
 
     /**
+     * Find data by id
+     *
+     * @param int   $id
+     * @param array $columns
+     *
+     * @return mixed
+     */
+    public function findOrFail($id, $columns = ['*'])
+    {
+        return $this->callCache(__FUNCTION__, func_get_args());
+    }
+
+    /**
      * Find data by field and value
      *
      * @param string $field
