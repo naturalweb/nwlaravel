@@ -16,7 +16,7 @@ class ValidatorResolver extends Validator
 {
 
     protected $currentRule;
-    
+
     /**
      * The validation rules that imply the field is required.
      *
@@ -286,6 +286,6 @@ class ValidatorResolver extends Validator
             }
         }
 
-        return parent::__call($method, $parameters);
+        return call_user_func_array(array('parent', $method), $parameters);
     }
 }

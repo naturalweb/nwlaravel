@@ -247,6 +247,18 @@ trait CacheableRepository
     }
 
     /**
+     * Retrieve all data of repository
+     *
+     * @param array $columns
+     *
+     * @return mixed
+     */
+    public function get($columns = ['*'])
+    {
+        return $this->callCache(__FUNCTION__, func_get_args());
+    }
+
+    /**
      * Retrieve all data of repository, paginated
      *
      * @param null $limit
@@ -296,6 +308,30 @@ trait CacheableRepository
      * @return mixed
      */
     public function findWhere(array $where, $columns = ['*'])
+    {
+        return $this->callCache(__FUNCTION__, func_get_args());
+    }
+
+    /**
+     * Execute the query and get the first result.
+     *
+     * @param  array  $columns
+     * @return \Illuminate\Database\Eloquent\Model|object|static|null
+     */
+    public function first($columns = ['*'])
+    {
+        return $this->callCache(__FUNCTION__, func_get_args());
+    }
+
+    /**
+     * Execute the query and get the first result or throw an exception.
+     *
+     * @param  array  $columns
+     * @return \Illuminate\Database\Eloquent\Model|static
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     */
+    public function firstOrFail($columns = ['*'])
     {
         return $this->callCache(__FUNCTION__, func_get_args());
     }
