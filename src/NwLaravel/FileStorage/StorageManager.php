@@ -259,6 +259,7 @@ class StorageManager
             $imagine->resize($width, $height, !$scale);
             $imagine->opacity($opacity);
             $imagine->watermark($watermark);
+            $imagine->setImageFormat($data['extension']);
             // $imagine = $imagine->save($pathImage.'.'.$data['extension'], $quality);
             $data['size'] = $imagine->filesize();
             $content = $imagine->encode();
@@ -306,6 +307,10 @@ class StorageManager
             $extension = $info['extension'];
             $size = filesize($file);
             $mime = mime_content_type($file);
+        }
+
+        if (strtolower($extension) == 'png') {
+            $extension = 'jpg';
         }
 
         $name = $name ?: $clientOriginalName;

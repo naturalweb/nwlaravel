@@ -297,6 +297,13 @@ class ImagineImagick implements Imagine
         return $this;
     }
 
+    public function setImageFormat($format)
+    {
+        $this->image->trimImage(0);
+        $this->image->setImageFormat($format);
+        return $this;
+    }
+
     /**
      * Encode
      *

@@ -180,6 +180,11 @@ class ImagineGd implements Imagine
         return (bool) ($path && is_file($path) && strpos(mime_content_type($path), 'image/')===0);
     }
 
+    public function setImageFormat($format)
+    {
+        return $this;
+    }
+
     /**
      * Encode
      *
