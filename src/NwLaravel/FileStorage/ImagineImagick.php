@@ -299,8 +299,20 @@ class ImagineImagick implements Imagine
 
     public function setImageFormat($format)
     {
-        $this->image->trimImage(0);
+        $format = strtolower($format);
+        if (in_array($format, ['jpg', 'jpeg'])) {
+            $this->removeTransparent();
+        }
+
         $this->image->setImageFormat($format);
+        return $this;
+    }
+
+    public function removeTransparent($color = "white")
+    {
+        $this->image->setImageBackgroundColor($color);
+        $this->image->setImageAlphaChannel(Imagick::ALPHACHANNEL_REMOVE);
+        $this->image->mergeImageLayers(Imagick::LAYERMETHOD_FLATTEN);
         return $this;
     }
 

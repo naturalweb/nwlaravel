@@ -185,6 +185,11 @@ class ImagineGd implements Imagine
         return $this;
     }
 
+    public function removeTransparent($color = "white")
+    {
+        return $this;
+    }
+
     /**
      * Encode
      *

@@ -69,6 +69,10 @@ interface Imagine
      */
     public function stripProfiles();
 
+    public function setImageFormat($format);
+
+    public function removeTransparent($color = "white");
+
     /**
      * Encode
      *
